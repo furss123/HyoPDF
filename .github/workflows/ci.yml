@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore HyoPDF.sln
+
+      - name: Build
+        run: dotnet build HyoPDF.sln -c Release --no-restore
+
+      - name: Restore publish RID
+        run: dotnet restore src/HyoPDF.App/HyoPDF.App.csproj -r win-x64
+
+      - name: Publish (win-x64)
+        run: dotnet publish src/HyoPDF.App/HyoPDF.App.csproj -c Release -r win-x64 -p:PublishProfile=win-x64 -p:HyoPDFVersion=0.0.0-ci --no-restore
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: HyoPDF-ci-win-x64
+          path: artifacts/publish/win-x64/HyoPDF.exe
+          retention-days: 7

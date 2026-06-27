@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{98F45166-05AA-45E4-8694-32BCFD447C99}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HyoPDF.App", "src\HyoPDF.App\HyoPDF.App.csproj", "{3FD4C4B8-D695-46B1-81EA-C944FC12DF40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HyoPDF.Core", "src\HyoPDF.Core\HyoPDF.Core.csproj", "{529F8DEF-E414-4A1F-B88E-7CAE0CCB38AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HyoPDF.UI", "src\HyoPDF.UI\HyoPDF.UI.csproj", "{29B67CB1-BB31-4D1A-BFEA-BABF66C8243B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3FD4C4B8-D695-46B1-81EA-C944FC12DF40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FD4C4B8-D695-46B1-81EA-C944FC12DF40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FD4C4B8-D695-46B1-81EA-C944FC12DF40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FD4C4B8-D695-46B1-81EA-C944FC12DF40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{529F8DEF-E414-4A1F-B88E-7CAE0CCB38AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{529F8DEF-E414-4A1F-B88E-7CAE0CCB38AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{529F8DEF-E414-4A1F-B88E-7CAE0CCB38AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{529F8DEF-E414-4A1F-B88E-7CAE0CCB38AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29B67CB1-BB31-4D1A-BFEA-BABF66C8243B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29B67CB1-BB31-4D1A-BFEA-BABF66C8243B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29B67CB1-BB31-4D1A-BFEA-BABF66C8243B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29B67CB1-BB31-4D1A-BFEA-BABF66C8243B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3FD4C4B8-D695-46B1-81EA-C944FC12DF40} = {98F45166-05AA-45E4-8694-32BCFD447C99}
+		{529F8DEF-E414-4A1F-B88E-7CAE0CCB38AF} = {98F45166-05AA-45E4-8694-32BCFD447C99}
+		{29B67CB1-BB31-4D1A-BFEA-BABF66C8243B} = {98F45166-05AA-45E4-8694-32BCFD447C99}
+	EndGlobalSection
+EndGlobal

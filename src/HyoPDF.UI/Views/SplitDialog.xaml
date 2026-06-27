@@ -1,0 +1,62 @@
+<Window x:Class="HyoPDF.UI.Views.SplitDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Split PDF"
+        Width="420"
+        Height="300"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{DynamicResource BgBaseBrush}">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Enter page numbers where splits occur (1-based, comma-separated)"
+                   Style="{StaticResource TextSecondary}"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,8" />
+
+        <TextBox x:Name="SplitPointsBox"
+                 Grid.Row="1"
+                 Style="{StaticResource SearchTextBox}"
+                 AcceptsReturn="True"
+                 TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto"
+                 ToolTip="e.g. 3, 7 splits into pages 1-2, 3-6, 7-end" />
+
+        <TextBlock Grid.Row="2"
+                   Text="Output folder"
+                   Style="{StaticResource TextSecondary}"
+                   Margin="0,12,0,4" />
+
+        <DockPanel Grid.Row="3">
+            <Button Content="Browse..."
+                    DockPanel.Dock="Right"
+                    Style="{StaticResource ToolbarButton}"
+                    Margin="8,0,0,0"
+                    Click="OnBrowse" />
+            <TextBox x:Name="OutputDirBox"
+                     Style="{StaticResource SearchTextBox}" />
+        </DockPanel>
+
+        <StackPanel Grid.Row="4"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,16,0,0">
+            <Button Content="Cancel"
+                    Style="{StaticResource ToolbarButton}"
+                    Margin="0,0,8,0"
+                    IsCancel="True" />
+            <Button Content="Split"
+                    Style="{StaticResource ToolbarButton}"
+                    IsDefault="True"
+                    Click="OnSplit" />
+        </StackPanel>
+    </Grid>
+</Window>

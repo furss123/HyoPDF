@@ -1,0 +1,65 @@
+# Copy this workflow into the hyot-software-center repository as:
+# .github/workflows/hyopdf-release.yml
+#
+# Required repository secret in HyoPDF: SOFTWARE_CENTER_PAT with repo scope on hyot-software-center
+
+name: HyoPDF Release Sync
+
+on:
+  repository_dispatch:
+    types: [hyopdf-release]
+
+permissions:
+  contents: write
+
+jobs:
+  update-releases-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update releases.json
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'data/software/hyopdf/releases.json';
+            const payload = context.payload.client_payload;
+            const releases = fs.existsSync(path)
+              ? JSON.parse(fs.readFileSync(path, 'utf8'))
+              : { slug: 'hyopdf', latest: { stable: null, beta: null }, releases: [] };
+
+            if (!releases.slug) releases.slug = 'hyopdf';
+            if (!releases.latest) releases.latest = { stable: null, beta: null };
+            if (!Array.isArray(releases.releases)) releases.releases = [];
+
+            releases.releases = releases.releases.filter(
+              (entry) => entry.version !== payload.version
+            );
+
+            releases.releases.unshift({
+              version: payload.version,
+              channel: payload.channel,
+              releaseDate: payload.releaseDate,
+              githubTag: payload.githubTag,
+              assets: payload.assets,
+            });
+
+            if (payload.channel === 'beta') {
+              releases.latest.beta = payload.version;
+            } else {
+              releases.latest.stable = payload.version;
+            }
+
+            fs.mkdirSync('data/software/hyopdf', { recursive: true });
+            fs.writeFileSync(path, JSON.stringify(releases, null, 2) + '\n');
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/software/hyopdf/releases.json
+          git diff --staged --quiet && exit 0
+          git commit -m "chore(hyopdf): add release ${{ github.event.client_payload.version }}"
+          git push

@@ -1,0 +1,24 @@
+## Build artifacts
+bin/
+obj/
+publish/
+artifacts/
+
+## IDE
+.vs/
+*.user
+*.suo
+
+## OS
+Thumbs.db
+Desktop.ini
+
+## NuGet
+*.nupkg
+packages/
+
+## Logs
+*.log
+
+## Tools
+tools/

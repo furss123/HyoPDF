@@ -1,0 +1,20 @@
+<Project Sdk="WixToolset.Sdk/4.0.5">
+
+  <PropertyGroup>
+    <OutputType>Package</OutputType>
+    <InstallerPlatform Condition="'$(InstallerPlatform)' == ''">x64</InstallerPlatform>
+    <Platform Condition="'$(InstallerPlatform)' == 'arm64'">ARM64</Platform>
+    <Platform Condition="'$(InstallerPlatform)' != 'arm64'">x64</Platform>
+    <ProductVersion Condition="'$(ProductVersion)' == ''">1.0.0.0</ProductVersion>
+    <InstallerVersion Condition="'$(InstallerVersion)' == ''">$(ProductVersion)</InstallerVersion>
+    <PublishDir Condition="'$(PublishDir)' == ''">..\..\artifacts\publish\win-x64</PublishDir>
+    <OutputPath Condition="'$(OutputPath)' == ''">..\..\artifacts</OutputPath>
+    <OutputName>HyoPDF-$(InstallerVersion)-$(InstallerPlatform)</OutputName>
+    <DefineConstants>PublishDir=$(PublishDir);ProductVersion=$(ProductVersion)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="4.0.5" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,47 @@
+<Window x:Class="HyoPDF.UI.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="About HyoPDF"
+        Width="420"
+        Height="320"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        Background="Transparent"
+        AllowsTransparency="True">
+    <Border Background="{DynamicResource BgSurfaceBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="{StaticResource RadiusLg}"
+            Padding="32"
+            Margin="16">
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="HyoPDF"
+                       Style="{StaticResource TextTitle}"
+                       FontSize="28"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,8" />
+            <TextBlock Text="{Binding VersionText}"
+                       Style="{StaticResource TextSecondary}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,16" />
+            <TextBlock Text="© 2026 HyoT. All rights reserved."
+                       Style="{StaticResource TextSecondary}"
+                       HorizontalAlignment="Center"
+                       TextAlignment="Center"
+                       Margin="0,0,0,16" />
+            <TextBlock HorizontalAlignment="Center" Style="{StaticResource TextPrimary}">
+                <Hyperlink NavigateUri="https://furss123.github.io/hyot-software-center/ko/"
+                           RequestNavigate="OnLinkNavigate">
+                    furss123.github.io/hyot-software-center
+                </Hyperlink>
+            </TextBlock>
+            <Button Content="OK"
+                    Margin="0,24,0,0"
+                    Padding="24,8"
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource ToolbarButton}"
+                    Click="OnCloseClick" />
+        </StackPanel>
+    </Border>
+</Window>

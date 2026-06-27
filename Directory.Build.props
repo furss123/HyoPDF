@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <HyoPDFVersion Condition="'$(HyoPDFVersion)' == ''">1.0.0</HyoPDFVersion>
+    <HyoPDFVersionBase Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(HyoPDFVersion)', '^\d+\.\d+\.\d+'))">$([System.Text.RegularExpressions.Regex]::Match('$(HyoPDFVersion)', '^(\d+\.\d+\.\d+)').Groups[1].Value)</HyoPDFVersionBase>
+    <HyoPDFVersionBase Condition="'$(HyoPDFVersionBase)' == ''">1.0.0</HyoPDFVersionBase>
+    <Version>$(HyoPDFVersion)</Version>
+    <AssemblyVersion>$(HyoPDFVersionBase).0</AssemblyVersion>
+    <FileVersion>$(HyoPDFVersionBase).0</FileVersion>
+    <InformationalVersion>$(HyoPDFVersion)</InformationalVersion>
+  </PropertyGroup>
+</Project>

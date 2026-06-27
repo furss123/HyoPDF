@@ -1,0 +1,28 @@
+<UserControl x:Class="HyoPDF.UI.Views.StatusBarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Height="28"
+             Background="{DynamicResource BgSurfaceBrush}"
+             BorderBrush="{DynamicResource BorderBrush}"
+             BorderThickness="0,1,0,0">
+    <StackPanel Orientation="Horizontal"
+                VerticalAlignment="Center"
+                Margin="12,0"
+                HorizontalAlignment="Right">
+        <TextBlock Style="{StaticResource TextSecondary}" Margin="0,0,16,0">
+            <Run Text="{Binding Viewer.CurrentPageNumber, Mode=OneWay}" />
+            <Run Text="/" />
+            <Run Text="{Binding Viewer.PageCount, Mode=OneWay}" />
+        </TextBlock>
+        <TextBlock Style="{StaticResource TextSecondary}" Margin="0,0,16,0">
+            <Run Text="Zoom: " />
+            <Run Text="{Binding Viewer.ZoomLevel, Mode=OneWay}" />
+            <Run Text="%" />
+        </TextBlock>
+        <TextBlock Style="{StaticResource TextSecondary}">
+            <Run Text="Rotation: " />
+            <Run Text="{Binding Viewer.Rotation, Mode=OneWay}" />
+            <Run Text="°" />
+        </TextBlock>
+    </StackPanel>
+</UserControl>

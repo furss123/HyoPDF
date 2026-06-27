@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTitle" xml:space="preserve">
+    <value>HyoPDF</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Bookmarks" xml:space="preserve">
+    <value>Bookmarks</value>
+  </data>
+  <data name="Pages" xml:space="preserve">
+    <value>Pages</value>
+  </data>
+  <data name="DropPdfHere" xml:space="preserve">
+    <value>Drop a PDF file here</value>
+  </data>
+  <data name="Zoom" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
+  <data name="Rotate" xml:space="preserve">
+    <value>Rotate</value>
+  </data>
+  <data name="About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="PageManager" xml:space="preserve">
+    <value>Pages</value>
+  </data>
+  <data name="RecentFiles" xml:space="preserve">
+    <value>Recent</value>
+  </data>
+  <data name="NoRecentDocuments" xml:space="preserve">
+    <value>No recent documents</value>
+  </data>
+  <data name="ClearRecent" xml:space="preserve">
+    <value>Clear list</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>File not found</value>
+  </data>
+  <data name="Compress" xml:space="preserve">
+    <value>Compress</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="CompressLevel1" xml:space="preserve">
+    <value>Max quality</value>
+  </data>
+  <data name="CompressLevel2" xml:space="preserve">
+    <value>High quality</value>
+  </data>
+  <data name="CompressLevel3" xml:space="preserve">
+    <value>Balanced</value>
+  </data>
+  <data name="CompressLevel4" xml:space="preserve">
+    <value>Low quality</value>
+  </data>
+  <data name="CompressLevel5" xml:space="preserve">
+    <value>Minimum size</value>
+  </data>
+  <data name="CompressComplete" xml:space="preserve">
+    <value>Compression complete</value>
+  </data>
+  <data name="CompressCancelled" xml:space="preserve">
+    <value>Compression cancelled</value>
+  </data>
+  <data name="MergeComplete" xml:space="preserve">
+    <value>Merge complete</value>
+  </data>
+  <data name="SplitComplete" xml:space="preserve">
+    <value>Split complete</value>
+  </data>
+  <data name="ExportComplete" xml:space="preserve">
+    <value>Export complete</value>
+  </data>
+</root>

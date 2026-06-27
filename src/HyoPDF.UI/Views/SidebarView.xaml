@@ -1,0 +1,85 @@
+<UserControl x:Class="HyoPDF.UI.Views.SidebarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:HyoPDF.UI.Converters"
+             xmlns:models="clr-namespace:HyoPDF.Core.Models;assembly=HyoPDF.Core"
+             Width="260"
+             Background="{DynamicResource BgSurfaceBrush}"
+             BorderBrush="{DynamicResource BorderBrush}"
+             BorderThickness="0,0,1,0">
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+
+    <Grid Visibility="{Binding IsSidebarExpanded, Converter={StaticResource BoolToVis}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Expander Grid.Row="0"
+                  Header="{Binding BookmarksLabel}"
+                  IsExpanded="True"
+                  Margin="8"
+                  Foreground="{DynamicResource TextPrimaryBrush}"
+                  FontFamily="{StaticResource FontFamilyPrimary}">
+            <TreeView ItemsSource="{Binding Viewer.Bookmarks}"
+                      MinHeight="80"
+                      Background="{DynamicResource BgElevatedBrush}"
+                      BorderBrush="{DynamicResource BorderBrush}"
+                      BorderThickness="1"
+                      SelectedItemChanged="OnBookmarkSelected">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}"
+                                              DataType="{x:Type models:BookmarkItem}">
+                        <TextBlock Text="{Binding Title}" Style="{StaticResource TextSecondary}" />
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+        </Expander>
+
+        <Expander Grid.Row="1"
+                  Header="{Binding PagesLabel}"
+                  IsExpanded="True"
+                  Margin="8"
+                  Foreground="{DynamicResource TextPrimaryBrush}"
+                  FontFamily="{StaticResource FontFamilyPrimary}">
+            <ListBox x:Name="ThumbnailList"
+                     ItemsSource="{Binding Viewer.Pages}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     VirtualizingPanel.IsVirtualizing="True"
+                     VirtualizingPanel.ScrollUnit="Pixel"
+                     SelectionChanged="OnThumbnailSelectionChanged">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,4"
+                                Padding="4"
+                                CornerRadius="{StaticResource RadiusSm}"
+                                Background="{DynamicResource BgElevatedBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="1"
+                                Width="128">
+                            <StackPanel>
+                                <Image Source="{Binding Thumbnail}"
+                                       Stretch="Uniform"
+                                       Width="120"
+                                       RenderOptions.BitmapScalingMode="HighQuality" />
+                                <TextBlock Text="{Binding PageNumber, StringFormat=Page {0}}"
+                                           Style="{StaticResource TextSecondary}"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,4,0,0" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Expander>
+    </Grid>
+</UserControl>

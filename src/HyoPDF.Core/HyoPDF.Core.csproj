@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="iTextSharp.LGPLv2.Core" Version="3.8.0" />
+    <PackageReference Include="PdfiumViewer" Version="2.13.0" />
+    <PackageReference Include="PdfiumViewer.Native.x86_64.v8-xfa" Version="2018.4.8.256" Condition="'$(RuntimeIdentifier)' == 'win-x64' Or '$(RuntimeIdentifier)' == ''" />
+    <PackageReference Include="bblanchon.PDFium.Win32" Version="150.0.7843" Condition="'$(RuntimeIdentifier)' == 'win-arm64'" />
+    <PackageReference Include="PDFsharp" Version="6.2.4" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+  </ItemGroup>
+</Project>

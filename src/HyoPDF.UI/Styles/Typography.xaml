@@ -1,0 +1,24 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <FontFamily x:Key="FontFamilyKo">Pretendard, Segoe UI, sans-serif</FontFamily>
+    <FontFamily x:Key="FontFamilyEn">Inter, Segoe UI, sans-serif</FontFamily>
+    <FontFamily x:Key="FontFamilyPrimary">Pretendard, Inter, Segoe UI, sans-serif</FontFamily>
+
+    <Style x:Key="TextPrimary" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FontFamilyPrimary}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style x:Key="TextSecondary" TargetType="TextBlock" BasedOn="{StaticResource TextPrimary}">
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <Style x:Key="TextTitle" TargetType="TextBlock" BasedOn="{StaticResource TextPrimary}">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+</ResourceDictionary>
