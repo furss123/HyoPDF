@@ -24,13 +24,16 @@ New-Item -ItemType Directory -Force -Path $publishDir | Out-Null
 
 Push-Location $repoRoot
 try {
-    dotnet restore (Join-Path $repoRoot 'src\HyoPDF.App\HyoPDF.App.csproj') -r $Runtime
+    dotnet restore (Join-Path $repoRoot 'src\HyoPDF.App\HyoPDF.App.csproj') `
+        -r $Runtime `
+        -p:PublishReadyToRun=true
 
     dotnet publish (Join-Path $repoRoot 'src\HyoPDF.App\HyoPDF.App.csproj') `
         -c Release `
         -r $Runtime `
         -p:PublishProfile=$profileName `
         -p:HyoPDFVersion=$Version `
+        -p:PublishReadyToRun=true `
         --no-restore
 
     $publishedExe = Join-Path $publishDir 'HyoPDF.exe'
