@@ -146,6 +146,7 @@
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="MinHeight" Value="36" />
         <Setter Property="Padding" Value="12,8" />
         <Setter Property="FontFamily" Value="{StaticResource FontFamilyPrimary}" />
         <Setter Property="FontSize" Value="13" />
@@ -154,47 +155,45 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBox">
                     <Grid SnapsToDevicePixels="True">
-                        <ToggleButton x:Name="ToggleButton"
+                        <ToggleButton x:Name="DropDownToggle"
                                       Background="{TemplateBinding Background}"
                                       BorderBrush="{TemplateBinding BorderBrush}"
                                       BorderThickness="{TemplateBinding BorderThickness}"
+                                      HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Stretch"
                                       Focusable="False"
                                       IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                       ClickMode="Press">
                             <ToggleButton.Template>
                                 <ControlTemplate TargetType="ToggleButton">
-                                    <Border x:Name="border"
-                                            Background="{TemplateBinding Background}"
+                                    <Border Background="{TemplateBinding Background}"
                                             BorderBrush="{TemplateBinding BorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
-                                            CornerRadius="8">
+                                            CornerRadius="8"
+                                            MinHeight="36"
+                                            Cursor="Hand">
                                         <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="24" />
-                                            </Grid.ColumnDefinitions>
-                                            <ContentPresenter Grid.Column="0"
-                                                              Margin="12,8"
-                                                              HorizontalAlignment="Left"
-                                                              VerticalAlignment="Center"
-                                                              Content="{Binding SelectionBoxItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                                              ContentTemplate="{Binding SelectionBoxItemTemplate, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                                              ContentTemplateSelector="{Binding ItemTemplateSelector, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                                              ContentStringFormat="{Binding SelectionBoxItemStringFormat, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                                              TextElement.Foreground="{DynamicResource TextPrimaryBrush}" />
-                                            <Path Grid.Column="1"
-                                                  Data="M 0 0 L 4 4 L 8 0 Z"
+                                            <Path Data="M 0 0 L 4 4 L 8 0 Z"
                                                   Fill="{DynamicResource TextSecondaryBrush}"
-                                                  HorizontalAlignment="Center"
+                                                  HorizontalAlignment="Right"
                                                   VerticalAlignment="Center"
-                                                  Margin="0,0,8,0" />
+                                                  Margin="0,0,12,0" />
                                         </Grid>
                                     </Border>
                                 </ControlTemplate>
                             </ToggleButton.Template>
                         </ToggleButton>
+                        <ContentPresenter IsHitTestVisible="False"
+                                          Margin="12,0,32,0"
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Left"
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                          TextElement.Foreground="{TemplateBinding Foreground}" />
                         <Popup x:Name="PART_Popup"
                                Placement="Bottom"
+                               PlacementTarget="{Binding ElementName=DropDownToggle}"
                                IsOpen="{TemplateBinding IsDropDownOpen}"
                                AllowsTransparency="True"
                                Focusable="False"
@@ -205,8 +204,10 @@
                                     CornerRadius="8"
                                     MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
                                     Padding="2">
-                                <ScrollViewer MaxHeight="200">
-                                    <ItemsPresenter />
+                                <ScrollViewer MaxHeight="200"
+                                              SnapsToDevicePixels="True"
+                                              VerticalScrollBarVisibility="Auto">
+                                    <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
                                 </ScrollViewer>
                             </Border>
                         </Popup>

@@ -1,10 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HyoPDF.Core.Localization;
 using HyoPDF.Core.Services;
+using HyoPDF.UI.Helpers;
 using HyoPDF.UI.Services;
 using Microsoft.Win32;
 
@@ -54,11 +56,12 @@ public partial class MergeViewModel : ObservableObject
     {
         var dialog = new OpenFileDialog
         {
-            Filter = "PDF files (*.pdf)|*.pdf",
+            Filter = "PDF files (*.pdf)|*.pdf|All files (*.*)|*.*",
             Multiselect = true
         };
 
-        if (dialog.ShowDialog() != true)
+        var owner = Application.Current?.MainWindow as Window;
+        if (dialog.ShowOpenDialog(owner) != true)
             return;
 
         AddFilesFromPaths(dialog.FileNames);
@@ -109,7 +112,7 @@ public partial class MergeViewModel : ObservableObject
             InitialDirectory = Path.GetDirectoryName(OutputPath)
         };
 
-        if (dialog.ShowDialog() != true)
+        if (dialog.ShowSaveDialog(Application.Current?.MainWindow as Window) != true)
             return;
 
         OutputPath = dialog.FileName;

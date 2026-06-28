@@ -371,6 +371,28 @@ public partial class ViewerViewModel : ObservableObject, IDisposable
 
         }
 
+        catch (Exception ex)
+
+        {
+
+            System.Diagnostics.Debug.WriteLine($"[Viewer] LoadDocument failed: {ex}");
+
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+
+            {
+
+                HasDocument = false;
+
+                PageCount = 0;
+
+                Pages.Clear();
+
+            });
+
+            _toastService.Show(_localization.GetString("OpenPdfFailed"), ToastType.Error);
+
+        }
+
         finally
 
         {

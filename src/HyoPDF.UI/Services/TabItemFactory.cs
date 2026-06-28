@@ -25,12 +25,7 @@ public sealed class TabItemFactory
 
     public TabItemViewModel CreateWelcome() => CreateInternal(null);
 
-    public TabItemViewModel CreateWithFile(string path)
-    {
-        var tab = CreateInternal(path);
-        tab.Viewer.LoadDocument(path);
-        return tab;
-    }
+    public TabItemViewModel CreateForPath(string path) => CreateInternal(path);
 
     private TabItemViewModel CreateInternal(string? path)
     {

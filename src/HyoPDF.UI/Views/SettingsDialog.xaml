@@ -10,7 +10,8 @@
         ResizeMode="NoResize"
         WindowStyle="None"
         AllowsTransparency="True"
-        Background="Transparent">
+        Background="Transparent"
+        PreviewKeyDown="OnPreviewKeyDown">
     <Window.Resources>
         <conv:ThemePreferenceConverter x:Key="ThemeConverter" />
 
@@ -20,95 +21,6 @@
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Foreground" Value="#E8E8E8" />
             <Setter Property="Margin" Value="0,0,0,12" />
-        </Style>
-
-        <Style x:Key="SettingsFieldComboItem" TargetType="ComboBoxItem">
-            <Setter Property="Foreground" Value="#E8E8E8" />
-            <Setter Property="Background" Value="#1A1A1A" />
-            <Setter Property="Padding" Value="12,8" />
-            <Style.Triggers>
-                <Trigger Property="IsHighlighted" Value="True">
-                    <Setter Property="Background" Value="#1E1E1E" />
-                </Trigger>
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#1E1E1E" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="SettingsFieldCombo" TargetType="ComboBox">
-            <Setter Property="Background" Value="#1A1A1A" />
-            <Setter Property="Foreground" Value="#E8E8E8" />
-            <Setter Property="BorderBrush" Value="#2A2A2A" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Padding" Value="12,8" />
-            <Setter Property="FontFamily" Value="{StaticResource FontFamilyPrimary}" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="ItemContainerStyle" Value="{StaticResource SettingsFieldComboItem}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ComboBox">
-                        <Grid SnapsToDevicePixels="True">
-                            <ToggleButton x:Name="ToggleButton"
-                                          Background="{TemplateBinding Background}"
-                                          BorderBrush="{TemplateBinding BorderBrush}"
-                                          BorderThickness="{TemplateBinding BorderThickness}"
-                                          Focusable="False"
-                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                          ClickMode="Press">
-                                <ToggleButton.Template>
-                                    <ControlTemplate TargetType="ToggleButton">
-                                        <Border x:Name="border"
-                                                Background="{TemplateBinding Background}"
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                CornerRadius="8">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="24" />
-                                                </Grid.ColumnDefinitions>
-                                                <ContentPresenter Grid.Column="0"
-                                                                  Margin="12,8"
-                                                                  HorizontalAlignment="Left"
-                                                                  VerticalAlignment="Center"
-                                                                  Content="{Binding SelectionBoxItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                                                  ContentTemplate="{Binding SelectionBoxItemTemplate, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                                                  ContentTemplateSelector="{Binding ItemTemplateSelector, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                                                  ContentStringFormat="{Binding SelectionBoxItemStringFormat, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                                                  TextElement.Foreground="#E8E8E8" />
-                                                <Path Grid.Column="1"
-                                                      Data="M 0 0 L 4 4 L 8 0 Z"
-                                                      Fill="#909090"
-                                                      HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center"
-                                                      Margin="0,0,8,0" />
-                                            </Grid>
-                                        </Border>
-                                    </ControlTemplate>
-                                </ToggleButton.Template>
-                            </ToggleButton>
-                            <Popup x:Name="PART_Popup"
-                                   Placement="Bottom"
-                                   IsOpen="{TemplateBinding IsDropDownOpen}"
-                                   AllowsTransparency="True"
-                                   Focusable="False"
-                                   PopupAnimation="Slide">
-                                <Border Background="#1A1A1A"
-                                        BorderBrush="#2A2A2A"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
-                                        Padding="2">
-                                    <ScrollViewer MaxHeight="200">
-                                        <ItemsPresenter />
-                                    </ScrollViewer>
-                                </Border>
-                            </Popup>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
         </Style>
     </Window.Resources>
 
@@ -127,21 +39,20 @@
 
                 <TextBlock Text="테마"
                            Style="{StaticResource DialogSectionLabel}" />
-                <ComboBox Style="{StaticResource SettingsFieldCombo}"
+                <ComboBox Style="{StaticResource DialogFieldCombo}"
                           ItemsSource="{Binding ThemeOptions}"
                           SelectedItem="{Binding SelectedTheme}"
                           Margin="0,0,0,16">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Converter={StaticResource ThemeConverter}}"
-                                       Foreground="#E8E8E8" />
+                            <TextBlock Text="{Binding Converter={StaticResource ThemeConverter}}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
 
                 <TextBlock Text="언어"
                            Style="{StaticResource DialogSectionLabel}" />
-                <ComboBox Style="{StaticResource SettingsFieldCombo}"
+                <ComboBox Style="{StaticResource DialogFieldCombo}"
                           ItemsSource="{Binding LanguageOptions}"
                           DisplayMemberPath="DisplayName"
                           SelectedItem="{Binding SelectedLanguageOption}"
@@ -159,16 +70,14 @@
                          Margin="0,0,0,16" />
 
                 <CheckBox Content="사이드바 기본 표시"
+                          Style="{StaticResource DialogCheckBox}"
                           IsChecked="{Binding SidebarVisible}"
-                          Foreground="#E8E8E8"
-                          FontFamily="{StaticResource FontFamilyPrimary}"
-                          FontSize="13"
                           Margin="0,0,0,20" />
 
                 <Button Content="닫기"
                         HorizontalAlignment="Right"
                         Style="{StaticResource DialogSecondaryButton}"
-                        IsDefault="True"
+                        IsCancel="True"
                         Click="OnCloseClick" />
             </StackPanel>
         </ScrollViewer>

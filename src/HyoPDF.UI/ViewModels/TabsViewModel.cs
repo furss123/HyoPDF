@@ -47,9 +47,10 @@ public partial class TabsViewModel : ObservableObject
 
         RemoveWelcomeTabIfNeeded();
 
-        var tab = _factory.CreateWithFile(path);
+        var tab = _factory.CreateForPath(path);
         Tabs.Add(tab);
         SwitchTab(tab);
+        tab.Viewer.LoadDocument(path);
     }
 
     public bool IsPathOpen(string path) =>
@@ -150,7 +151,10 @@ public partial class TabsViewModel : ObservableObject
             return;
 
         var welcome = Tabs[0];
-        Tabs.Clear();
+        Tabs.Remove(welcome);
+        if (ReferenceEquals(ActiveTab, welcome))
+            ActiveTab = null;
+
         welcome.Viewer.CloseDocument();
         welcome.Viewer.Dispose();
         welcome.Page.OnDocumentClosed();

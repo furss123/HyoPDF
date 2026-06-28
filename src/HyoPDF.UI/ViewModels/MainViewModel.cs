@@ -10,6 +10,7 @@ using HyoPDF.Core.Models;
 using HyoPDF.Core.Services;
 using HyoPDF.Core.Settings;
 using HyoPDF.Core.UndoRedo;
+using HyoPDF.UI.Helpers;
 using HyoPDF.UI.Services;
 using Microsoft.Win32;
 
@@ -270,7 +271,10 @@ public partial class MainViewModel : ObservableObject
     public void OpenFileFromPath(string path)
     {
         if (!File.Exists(path))
+        {
+            _toastService.Show(_localization.GetString("FileNotFound"), ToastType.Error);
             return;
+        }
 
         DocumentTabs.OpenNewTab(path);
         _recentFilesService.Add(path);
@@ -519,11 +523,12 @@ public partial class MainViewModel : ObservableObject
     {
         var dialog = new OpenFileDialog
         {
-            Filter = "PDF files (*.pdf)|*.pdf",
+            Filter = "PDF files (*.pdf)|*.pdf|All files (*.*)|*.*",
             Multiselect = false
         };
 
-        if (dialog.ShowDialog() == true)
+        var owner = Application.Current?.MainWindow as Window;
+        if (dialog.ShowOpenDialog(owner) == true)
             OpenFileFromPath(dialog.FileName);
     }
 
