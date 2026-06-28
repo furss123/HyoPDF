@@ -5,22 +5,103 @@
         Title="설정"
         MinWidth="520"
         Width="520"
-        SizeToContent="Height"
+        Height="480"
+        MinHeight="480"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
+        ShowInTaskbar="False"
         PreviewKeyDown="OnPreviewKeyDown">
     <Window.Resources>
         <conv:ThemePreferenceConverter x:Key="ThemeConverter" />
 
-        <Style x:Key="SettingsSectionHeader" TargetType="TextBlock">
-            <Setter Property="FontFamily" Value="{StaticResource FontFamilyPrimary}" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="FontWeight" Value="SemiBold" />
+        <Style x:Key="SettingsComboBoxItem" TargetType="ComboBoxItem">
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="FontSize" Value="13" />
             <Setter Property="Foreground" Value="#E8E8E8" />
-            <Setter Property="Margin" Value="0,0,0,12" />
+            <Setter Property="Background" Value="#1A1A1A" />
+            <Style.Triggers>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter Property="Background" Value="#2A2A2A" />
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#0078D4" />
+                    <Setter Property="Foreground" Value="#FFFFFF" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <ControlTemplate x:Key="SettingsComboBoxTemplate" TargetType="ComboBox">
+            <Grid>
+                <ToggleButton x:Name="DropDownToggle"
+                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                              Background="{TemplateBinding Background}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch"
+                              Focusable="False"
+                              ClickMode="Press">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="8"
+                                    Height="36"
+                                    Cursor="Hand">
+                                <Grid>
+                                    <TextBlock Text="▾"
+                                               Foreground="#909090"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,12,0" />
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+                <ContentPresenter IsHitTestVisible="False"
+                                  Margin="12,0,32,0"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Left"
+                                  Content="{TemplateBinding SelectionBoxItem}"
+                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                  ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                  TextElement.Foreground="#E8E8E8"
+                                  TextElement.FontSize="13" />
+                <Popup x:Name="PART_Popup"
+                       IsOpen="{TemplateBinding IsDropDownOpen}"
+                       AllowsTransparency="True"
+                       Placement="Bottom"
+                       PlacementTarget="{Binding ElementName=DropDownToggle}"
+                       PopupAnimation="Fade">
+                    <Border Background="#1A1A1A"
+                            BorderBrush="#2A2A2A"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="4"
+                            MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                        <ScrollViewer MaxHeight="200"
+                                      SnapsToDevicePixels="True"
+                                      VerticalScrollBarVisibility="Auto">
+                            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                        </ScrollViewer>
+                    </Border>
+                </Popup>
+            </Grid>
+        </ControlTemplate>
+
+        <Style x:Key="SettingsComboBox" TargetType="ComboBox">
+            <Setter Property="Background" Value="#1A1A1A" />
+            <Setter Property="Foreground" Value="#E8E8E8" />
+            <Setter Property="BorderBrush" Value="#2A2A2A" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="MinHeight" Value="36" />
+            <Setter Property="ItemContainerStyle" Value="{StaticResource SettingsComboBoxItem}" />
+            <Setter Property="Template" Value="{StaticResource SettingsComboBoxTemplate}" />
         </Style>
     </Window.Resources>
 
@@ -29,57 +110,92 @@
             BorderThickness="1"
             CornerRadius="12"
             Margin="8">
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="28">
-            <StackPanel>
-                <TextBlock Text="설정"
-                           Style="{StaticResource DialogTitle}" />
+        <Grid Margin="28">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-                <TextBlock Text="화면 설정"
-                           Style="{StaticResource SettingsSectionHeader}" />
+            <TextBlock Grid.Row="0"
+                       Text="설정"
+                       Style="{StaticResource DialogTitle}" />
 
-                <TextBlock Text="테마"
-                           Style="{StaticResource DialogSectionLabel}" />
-                <ComboBox Style="{StaticResource DialogFieldCombo}"
-                          ItemsSource="{Binding ThemeOptions}"
-                          SelectedItem="{Binding SelectedTheme}"
-                          Margin="0,0,0,16">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Converter={StaticResource ThemeConverter}}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
+            <TextBlock Grid.Row="1"
+                       Text="화면 설정"
+                       FontFamily="{StaticResource FontFamilyPrimary}"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       Foreground="#E8E8E8"
+                       Margin="0,0,0,12" />
 
-                <TextBlock Text="언어"
-                           Style="{StaticResource DialogSectionLabel}" />
-                <ComboBox Style="{StaticResource DialogFieldCombo}"
-                          ItemsSource="{Binding LanguageOptions}"
-                          DisplayMemberPath="DisplayName"
-                          SelectedItem="{Binding SelectedLanguageOption}"
-                          Margin="0,0,0,20" />
+            <TextBlock Grid.Row="2"
+                       Text="테마"
+                       Style="{StaticResource DialogSectionLabel}" />
+            <ComboBox Grid.Row="3"
+                      Style="{StaticResource SettingsComboBox}"
+                      ItemsSource="{Binding ThemeOptions}"
+                      SelectedItem="{Binding SelectedTheme}"
+                      Margin="0,0,0,16">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource ThemeConverter}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
 
-                <TextBlock Text="뷰어 설정"
-                           Style="{StaticResource SettingsSectionHeader}" />
+            <TextBlock Grid.Row="4"
+                       Text="언어"
+                       Style="{StaticResource DialogSectionLabel}" />
+            <ComboBox Grid.Row="5"
+                      Style="{StaticResource SettingsComboBox}"
+                      ItemsSource="{Binding LanguageOptions}"
+                      DisplayMemberPath="DisplayName"
+                      SelectedItem="{Binding SelectedLanguageOption}"
+                      Margin="0,0,0,20" />
 
-                <TextBlock Text="기본 확대/축소 (%)"
-                           Style="{StaticResource DialogSectionLabel}" />
-                <TextBox Style="{StaticResource DialogFieldTextBox}"
-                         Width="80"
-                         HorizontalAlignment="Left"
-                         Text="{Binding DefaultZoom, UpdateSourceTrigger=PropertyChanged}"
-                         Margin="0,0,0,16" />
+            <TextBlock Grid.Row="6"
+                       Text="뷰어 설정"
+                       FontFamily="{StaticResource FontFamilyPrimary}"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       Foreground="#E8E8E8"
+                       Margin="0,0,0,12" />
 
-                <CheckBox Content="사이드바 기본 표시"
-                          Style="{StaticResource DialogCheckBox}"
-                          IsChecked="{Binding SidebarVisible}"
-                          Margin="0,0,0,20" />
+            <TextBlock Grid.Row="7"
+                       Text="기본 확대/축소 (%)"
+                       Style="{StaticResource DialogSectionLabel}" />
+            <TextBox Grid.Row="8"
+                     Style="{StaticResource DialogFieldTextBox}"
+                     Width="80"
+                     HorizontalAlignment="Left"
+                     Text="{Binding DefaultZoom, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,0,16" />
 
-                <Button Content="닫기"
-                        HorizontalAlignment="Right"
-                        Style="{StaticResource DialogSecondaryButton}"
-                        IsCancel="True"
-                        Click="OnCloseClick" />
-            </StackPanel>
-        </ScrollViewer>
+            <CheckBox Grid.Row="9"
+                      Content="사이드바 기본 표시"
+                      IsChecked="{Binding SidebarVisible}"
+                      Foreground="#E8E8E8"
+                      FontFamily="{StaticResource FontFamilyPrimary}"
+                      FontSize="13"
+                      VerticalAlignment="Top"
+                      Margin="0,0,0,20" />
+
+            <Button Grid.Row="10"
+                    Content="닫기"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Style="{StaticResource DialogSecondaryButton}"
+                    IsCancel="True"
+                    Click="OnCloseClick" />
+        </Grid>
     </Border>
 </Window>

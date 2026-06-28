@@ -109,6 +109,9 @@
   <data name="OpenPdfFailed" xml:space="preserve">
     <value>PDF를 열 수 없습니다</value>
   </data>
+  <data name="SettingsOpenFailed" xml:space="preserve">
+    <value>설정 창을 열 수 없습니다</value>
+  </data>
   <data name="Compress" xml:space="preserve">
     <value>압축</value>
   </data>

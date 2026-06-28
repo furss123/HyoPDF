@@ -393,8 +393,16 @@ public partial class MainWindow : Window
 
     private void ShowSettingsDialog()
     {
-        var dialog = new SettingsDialog(_viewModel.Settings) { Owner = this };
-        dialog.ShowDialog();
+        try
+        {
+            var dialog = new SettingsDialog(_viewModel.Settings) { Owner = this };
+            dialog.ShowDialog();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Settings] Open dialog: {ex}");
+            _toastService.Show(_localization.GetString("SettingsOpenFailed"), ToastType.Error);
+        }
     }
 
     private void ApplyFullscreen(bool fullscreen)

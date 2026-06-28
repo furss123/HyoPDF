@@ -109,6 +109,9 @@
   <data name="OpenPdfFailed" xml:space="preserve">
     <value>Could not open the PDF file</value>
   </data>
+  <data name="SettingsOpenFailed" xml:space="preserve">
+    <value>Could not open settings</value>
+  </data>
   <data name="Compress" xml:space="preserve">
     <value>Compress</value>
   </data>
