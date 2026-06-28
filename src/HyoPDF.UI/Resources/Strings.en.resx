@@ -88,7 +88,13 @@
   <data name="PageManager" xml:space="preserve">
     <value>Pages</value>
   </data>
+  <data name="PageManagerShort" xml:space="preserve">
+    <value>Manage</value>
+  </data>
   <data name="RecentFiles" xml:space="preserve">
+    <value>Recent</value>
+  </data>
+  <data name="RecentFilesShort" xml:space="preserve">
     <value>Recent</value>
   </data>
   <data name="NoRecentDocuments" xml:space="preserve">
@@ -107,25 +113,28 @@
     <value>Settings</value>
   </data>
   <data name="CompressLevel1" xml:space="preserve">
-    <value>Max quality</value>
+    <value>Minimum size</value>
   </data>
   <data name="CompressLevel2" xml:space="preserve">
-    <value>High quality</value>
+    <value>Low quality</value>
   </data>
   <data name="CompressLevel3" xml:space="preserve">
     <value>Balanced</value>
   </data>
   <data name="CompressLevel4" xml:space="preserve">
-    <value>Low quality</value>
+    <value>High quality</value>
   </data>
   <data name="CompressLevel5" xml:space="preserve">
-    <value>Minimum size</value>
+    <value>Maximum quality</value>
   </data>
   <data name="CompressComplete" xml:space="preserve">
     <value>Compression complete</value>
   </data>
   <data name="CompressCancelled" xml:space="preserve">
     <value>Compression cancelled</value>
+  </data>
+  <data name="CompressFailed" xml:space="preserve">
+    <value>Failed to compress file: {0}</value>
   </data>
   <data name="MergeComplete" xml:space="preserve">
     <value>Merge complete</value>
@@ -135,5 +144,338 @@
   </data>
   <data name="ExportComplete" xml:space="preserve">
     <value>Export complete</value>
+  </data>
+  <data name="ConvertToImageComplete" xml:space="preserve">
+    <value>Image conversion complete</value>
+  </data>
+  <data name="ConvertToImageFailed" xml:space="preserve">
+    <value>Image conversion failed</value>
+  </data>
+  <data name="Appearance" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="Viewer" xml:space="preserve">
+    <value>Viewer</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ShowSidebarByDefault" xml:space="preserve">
+    <value>Show sidebar by default</value>
+  </data>
+  <data name="DefaultZoom" xml:space="preserve">
+    <value>Default zoom (%)</value>
+  </data>
+  <data name="ZoomIn" xml:space="preserve">
+    <value>Zoom in</value>
+  </data>
+  <data name="ZoomOut" xml:space="preserve">
+    <value>Zoom out</value>
+  </data>
+  <data name="Fullscreen" xml:space="preserve">
+    <value>Fullscreen</value>
+  </data>
+  <data name="FullscreenShort" xml:space="preserve">
+    <value>Full</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="ZoomReset" xml:space="preserve">
+    <value>100%</value>
+  </data>
+  <data name="FitToWidth" xml:space="preserve">
+    <value>Fit Width</value>
+  </data>
+  <data name="FitToWidthShort" xml:space="preserve">
+    <value>Fit</value>
+  </data>
+  <data name="PrevPage" xml:space="preserve">
+    <value>Prev</value>
+  </data>
+  <data name="NextPage" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Search...</value>
+  </data>
+  <data name="Merge" xml:space="preserve">
+    <value>Merge</value>
+  </data>
+  <data name="Split" xml:space="preserve">
+    <value>Split</value>
+  </data>
+  <data name="Extract" xml:space="preserve">
+    <value>Extract</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="OutputPath" xml:space="preserve">
+    <value>Output location</value>
+  </data>
+  <data name="QualityLevel" xml:space="preserve">
+    <value>Quality level</value>
+  </data>
+  <data name="CompressDialogTitle" xml:space="preserve">
+    <value>Compress PDF</value>
+  </data>
+  <data name="CompressOriginalSize" xml:space="preserve">
+    <value>Original size</value>
+  </data>
+  <data name="CompressEstimatedSize" xml:space="preserve">
+    <value>Estimated size</value>
+  </data>
+  <data name="CompressStart" xml:space="preserve">
+    <value>Compress</value>
+  </data>
+  <data name="CompressSelectFile" xml:space="preserve">
+    <value>Select file</value>
+  </data>
+  <data name="CompressChange" xml:space="preserve">
+    <value>Change</value>
+  </data>
+  <data name="Compressing" xml:space="preserve">
+    <value>Compressing...</value>
+  </data>
+  <data name="Browse" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="DragPdfHint" xml:space="preserve">
+    <value>Drag PDF files here</value>
+  </data>
+  <data name="OrText" xml:space="preserve">
+    <value>or</value>
+  </data>
+  <data name="AddFiles" xml:space="preserve">
+    <value>Add files</value>
+  </data>
+  <data name="MergeDialogTitle" xml:space="preserve">
+    <value>Merge PDF</value>
+  </data>
+  <data name="MergeFiles" xml:space="preserve">
+    <value>Files to merge</value>
+  </data>
+  <data name="MergeStart" xml:space="preserve">
+    <value>Start merge</value>
+  </data>
+  <data name="PrintDialogTitle" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="Printer" xml:space="preserve">
+    <value>Printer</value>
+  </data>
+  <data name="PageRange" xml:space="preserve">
+    <value>Page range</value>
+  </data>
+  <data name="AllPages" xml:space="preserve">
+    <value>All pages</value>
+  </data>
+  <data name="CurrentPage" xml:space="preserve">
+    <value>Current page</value>
+  </data>
+  <data name="CustomRange" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="PagesPerSheet" xml:space="preserve">
+    <value>Pages per sheet</value>
+  </data>
+  <data name="DuplexPrint" xml:space="preserve">
+    <value>Double-sided</value>
+  </data>
+  <data name="FitToPage" xml:space="preserve">
+    <value>Fit to page</value>
+  </data>
+  <data name="Copies" xml:space="preserve">
+    <value>Copies</value>
+  </data>
+  <data name="PrintPreview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="PrintError" xml:space="preserve">
+    <value>An error occurred while printing.</value>
+  </data>
+  <data name="PrintStarted" xml:space="preserve">
+    <value>Printing started.</value>
+  </data>
+  <data name="PrintPreparing" xml:space="preserve">
+    <value>Preparing to print...</value>
+  </data>
+  <data name="PrintCompleted" xml:space="preserve">
+    <value>Printing completed.</value>
+  </data>
+  <data name="PrintNoDocument" xml:space="preserve">
+    <value>No document is open.</value>
+  </data>
+  <data name="PrintFileNotFound" xml:space="preserve">
+    <value>The document file could not be found.</value>
+  </data>
+  <data name="PrintNoPages" xml:space="preserve">
+    <value>There are no pages to print.</value>
+  </data>
+  <data name="PrintNoPrinter" xml:space="preserve">
+    <value>No printer is installed.</value>
+  </data>
+  <data name="PrintCollate" xml:space="preserve">
+    <value>Collate copies</value>
+  </data>
+  <data name="PrintGrayscale" xml:space="preserve">
+    <value>Print in grayscale</value>
+  </data>
+  <data name="PrintLayout" xml:space="preserve">
+    <value>Layout</value>
+  </data>
+  <data name="PrintPageFit" xml:space="preserve">
+    <value>Page scaling</value>
+  </data>
+  <data name="PrintActualSize" xml:space="preserve">
+    <value>Actual size</value>
+  </data>
+  <data name="PrintCustomScale" xml:space="preserve">
+    <value>Custom %</value>
+  </data>
+  <data name="PrintStart" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="PrintPrinterSettings" xml:space="preserve">
+    <value>Printer settings</value>
+  </data>
+  <data name="PrintTotalSheetsFormat" xml:space="preserve">
+    <value>{0} sheet(s) will be printed</value>
+  </data>
+  <data name="PrintInvalidRange" xml:space="preserve">
+    <value>Enter a valid page range.</value>
+  </data>
+  <data name="SplitDialogTitle" xml:space="preserve">
+    <value>Split PDF</value>
+  </data>
+  <data name="SplitPages" xml:space="preserve">
+    <value>Split pages</value>
+  </data>
+  <data name="SplitOutputFolder" xml:space="preserve">
+    <value>Output folder</value>
+  </data>
+  <data name="SplitStart" xml:space="preserve">
+    <value>Start split</value>
+  </data>
+  <data name="OpenFileTooltip" xml:space="preserve">
+    <value>Open PDF file (Ctrl+O)</value>
+  </data>
+  <data name="FullscreenTooltip" xml:space="preserve">
+    <value>Fullscreen (F11)</value>
+  </data>
+  <data name="MergePdfTooltip" xml:space="preserve">
+    <value>Merge PDF</value>
+  </data>
+  <data name="SplitPdfTooltip" xml:space="preserve">
+    <value>Split PDF</value>
+  </data>
+  <data name="Rotate90" xml:space="preserve">
+    <value>Rotate 90°</value>
+  </data>
+  <data name="Rotate180" xml:space="preserve">
+    <value>Rotate 180°</value>
+  </data>
+  <data name="Rotate270" xml:space="preserve">
+    <value>Rotate 270°</value>
+  </data>
+  <data name="ExtractPages" xml:space="preserve">
+    <value>Extract pages...</value>
+  </data>
+  <data name="ExtractPagesComplete" xml:space="preserve">
+    <value>Pages extracted successfully</value>
+  </data>
+  <data name="ExtractPagesFailed" xml:space="preserve">
+    <value>Failed to extract pages</value>
+  </data>
+  <data name="DeletePagesComplete" xml:space="preserve">
+    <value>Pages deleted successfully</value>
+  </data>
+  <data name="DeletePagesFailed" xml:space="preserve">
+    <value>Failed to delete pages</value>
+  </data>
+  <data name="AllPagesDeleted" xml:space="preserve">
+    <value>All pages have been deleted</value>
+  </data>
+  <data name="CopyPagesComplete" xml:space="preserve">
+    <value>Pages copied</value>
+  </data>
+  <data name="CopyPagesFailed" xml:space="preserve">
+    <value>Failed to copy pages</value>
+  </data>
+  <data name="CutPagesComplete" xml:space="preserve">
+    <value>Pages cut</value>
+  </data>
+  <data name="PastePagesComplete" xml:space="preserve">
+    <value>Pages pasted</value>
+  </data>
+  <data name="PastePagesFailed" xml:space="preserve">
+    <value>Failed to paste pages</value>
+  </data>
+  <data name="LoadingMessage" xml:space="preserve">
+    <value>Processing...</value>
+  </data>
+  <data name="LoadingPdfOpen" xml:space="preserve">
+    <value>Loading PDF...</value>
+  </data>
+  <data name="LoadingPagesCount" xml:space="preserve">
+    <value>Loading {0} pages...</value>
+  </data>
+  <data name="LoadingThumbnailsGenerating" xml:space="preserve">
+    <value>Generating thumbnails...</value>
+  </data>
+  <data name="ImageExportDialogTitle" xml:space="preserve">
+    <value>Image export settings</value>
+  </data>
+  <data name="ImageExportFormat" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="ImageExportQuality" xml:space="preserve">
+    <value>Quality (JPG only)</value>
+  </data>
+  <data name="ImageExportQualityHint" xml:space="preserve">
+    <value>Disabled for PNG/BMP</value>
+  </data>
+  <data name="ImageExportOutputFolder" xml:space="preserve">
+    <value>Output folder</value>
+  </data>
+  <data name="ImageExportStart" xml:space="preserve">
+    <value>Start export</value>
+  </data>
+  <data name="ImageExportOpenFolder" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="ThumbnailDeletePage" xml:space="preserve">
+    <value>Delete page</value>
+  </data>
+  <data name="ThumbnailRotatePage" xml:space="preserve">
+    <value>Rotate page</value>
+  </data>
+  <data name="ThumbnailExtractPage" xml:space="preserve">
+    <value>Extract page</value>
+  </data>
+  <data name="SplitFromHere" xml:space="preserve">
+    <value>Split from this page</value>
+  </data>
+  <data name="OpenPageManager" xml:space="preserve">
+    <value>Open page manager</value>
+  </data>
+  <data name="Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>About HyoPDF</value>
   </data>
 </root>

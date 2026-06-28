@@ -2,8 +2,11 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Icons.xaml" />
         <ResourceDictionary Source="Typography.xaml" />
         <ResourceDictionary Source="Controls.xaml" />
+        <ResourceDictionary Source="Scrollbars.xaml" />
+        <ResourceDictionary Source="DialogStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

@@ -27,7 +27,7 @@ public partial class SplitDialog : Window
         var outputDir = OutputDirBox.Text.Trim();
         if (string.IsNullOrEmpty(outputDir) || !Directory.Exists(outputDir))
         {
-            MessageBox.Show(this, "Select a valid output folder.", "Split", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(this, "유효한 저장 폴더를 선택하세요.", "PDF 분할", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
@@ -42,7 +42,7 @@ public partial class SplitDialog : Window
 
         if (points.Count == 0)
         {
-            MessageBox.Show(this, "Enter at least one valid page number.", "Split", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(this, "유효한 페이지 번호를 하나 이상 입력하세요.", "PDF 분할", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -25,10 +26,14 @@ public partial class MainViewModel : ObservableObject
     private bool _isApplyingTabSwitch;
     private TabItemViewModel? _wiredPageTab;
     private ViewerViewModel? _wiredFullscreenViewer;
+    private ViewerViewModel? _wiredDocumentViewer;
     private TabItemViewModel? _lastActiveTab;
 
     [ObservableProperty]
     private bool _isSidebarExpanded = true;
+
+    [ObservableProperty]
+    private double _thumbnailSize = 120;
 
     [ObservableProperty]
     private string _openLabel = string.Empty;
@@ -55,6 +60,9 @@ public partial class MainViewModel : ObservableObject
     private string _recentFilesLabel = string.Empty;
 
     [ObservableProperty]
+    private string _recentFilesShortLabel = string.Empty;
+
+    [ObservableProperty]
     private string _noRecentDocumentsLabel = string.Empty;
 
     [ObservableProperty]
@@ -64,7 +72,103 @@ public partial class MainViewModel : ObservableObject
     private string _compressLabel = string.Empty;
 
     [ObservableProperty]
+    private string _loadingMessage = string.Empty;
+
+    [ObservableProperty]
     private string _settingsLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _zoomInLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _zoomOutLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _zoomResetLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _rotateLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _fullscreenLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _prevPageLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _nextPageLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _printLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _searchPlaceholderLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _fitToWidthLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _fitToWidthShortLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _fullscreenShortLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _pageManagerShortLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _openFileTooltipLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _fullscreenTooltipLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _mergeLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _splitLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _mergePdfTooltipLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _splitPdfTooltipLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _pagePanelLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _extractLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _deleteLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _rotate90Label = string.Empty;
+
+    [ObservableProperty]
+    private string _rotate180Label = string.Empty;
+
+    [ObservableProperty]
+    private string _rotate270Label = string.Empty;
+
+    [ObservableProperty]
+    private string _extractPagesLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _thumbnailDeletePageLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _thumbnailRotatePageLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _thumbnailExtractPageLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _splitFromHereLabel = string.Empty;
+
+    [ObservableProperty]
+    private string _openPageManagerLabel = string.Empty;
 
     [ObservableProperty]
     private bool _isRecentFlyoutOpen;
@@ -76,8 +180,12 @@ public partial class MainViewModel : ObservableObject
     public TabItemViewModel? ActiveTab => DocumentTabs.ActiveTab;
     public ViewerViewModel Viewer => DocumentTabs.ActiveTab!.Viewer;
     public PageViewModel Page => DocumentTabs.ActiveTab!.Page;
+    public bool HasOpenDocument =>
+        ActiveTab is not null
+        && Viewer.HasDocument
+        && !string.IsNullOrWhiteSpace(CurrentDocumentPath)
+        && File.Exists(CurrentDocumentPath);
 
-    public PrintViewModel Print { get; }
     public CompressViewModel Compress { get; }
     public SettingsViewModel Settings { get; }
 
@@ -91,9 +199,10 @@ public partial class MainViewModel : ObservableObject
     public ICommand UndoCommand { get; }
     public ICommand RedoCommand { get; }
     public ICommand ShowAboutCommand { get; }
-    public ICommand ShowPrintCommand { get; }
     public ICommand ShowCompressCommand { get; }
+    public ICommand ShowPageManagerCommand { get; }
     public ICommand ShowSettingsCommand { get; }
+    public ICommand ShowPrintCommand { get; }
     public ICommand ToggleRecentFlyoutCommand { get; }
     public ICommand EscapeCommand { get; }
 
@@ -101,9 +210,9 @@ public partial class MainViewModel : ObservableObject
     public event EventHandler? ShowAboutRequested;
     public event EventHandler? MergeDialogRequested;
     public event EventHandler? SplitDialogRequested;
-    public event EventHandler? PrintDialogRequested;
     public event EventHandler? CompressDialogRequested;
     public event EventHandler? SettingsDialogRequested;
+    public event EventHandler? PrintDialogRequested;
     public event EventHandler? ActiveTabContentChanged;
     public event EventHandler<bool>? FullscreenChanged;
 
@@ -114,7 +223,6 @@ public partial class MainViewModel : ObservableObject
         IRecentFilesService recentFilesService,
         IToastService toastService,
         TabsViewModel documentTabs,
-        PrintViewModel print,
         CompressViewModel compress,
         SettingsViewModel settings)
     {
@@ -124,7 +232,6 @@ public partial class MainViewModel : ObservableObject
         _recentFilesService = recentFilesService;
         _toastService = toastService;
         DocumentTabs = documentTabs;
-        Print = print;
         Compress = compress;
         Settings = settings;
 
@@ -138,21 +245,24 @@ public partial class MainViewModel : ObservableObject
         UndoCommand = new RelayCommand(Undo, CanUndo);
         RedoCommand = new RelayCommand(Redo, CanRedo);
         ShowAboutCommand = new RelayCommand(() => ShowAboutRequested?.Invoke(this, EventArgs.Empty));
-        ShowPrintCommand = new RelayCommand(
-            () => PrintDialogRequested?.Invoke(this, EventArgs.Empty),
-            () => Viewer.HasDocument);
-        ShowCompressCommand = new RelayCommand(() => CompressDialogRequested?.Invoke(this, EventArgs.Empty));
+        ShowCompressCommand = new RelayCommand(
+            () => CompressDialogRequested?.Invoke(this, EventArgs.Empty));
+        ShowPageManagerCommand = new RelayCommand(
+            () => Page.IsPanelOpen = true,
+            () => HasOpenDocument);
         ShowSettingsCommand = new RelayCommand(() => SettingsDialogRequested?.Invoke(this, EventArgs.Empty));
+        ShowPrintCommand = new RelayCommand(RequestPrint, () => HasOpenDocument);
         ToggleRecentFlyoutCommand = new RelayCommand(() => IsRecentFlyoutOpen = !IsRecentFlyoutOpen);
         EscapeCommand = new RelayCommand(HandleEscape);
 
         DocumentTabs.ActiveTabChanged += (_, _) => OnActiveTabChanged();
         Settings.SettingsChanged += (_, appSettings) => ApplySettings(appSettings);
 
+        _localization.CultureChanged += (_, _) => RefreshLabels();
         LoadSettings();
+        _ = InitializeRecentFilesAsync();
         OnActiveTabChanged();
         RefreshLabels();
-        _localization.CultureChanged += (_, _) => RefreshLabels();
     }
 
     public void OpenNewTab(string path) => OpenFileFromPath(path);
@@ -165,6 +275,17 @@ public partial class MainViewModel : ObservableObject
         DocumentTabs.OpenNewTab(path);
         _recentFilesService.Add(path);
         RefreshRecentFiles();
+    }
+
+    private void RequestPrint()
+    {
+        if (!HasOpenDocument)
+        {
+            _toastService.Show(_localization.GetString("PrintNoDocument"), ToastType.Error);
+            return;
+        }
+
+        PrintDialogRequested?.Invoke(this, EventArgs.Empty);
     }
 
     [RelayCommand]
@@ -241,6 +362,9 @@ public partial class MainViewModel : ObservableObject
         if (_wiredFullscreenViewer is not null)
             _wiredFullscreenViewer.PropertyChanged -= OnViewerFullscreenChanged;
 
+        if (_wiredDocumentViewer is not null)
+            _wiredDocumentViewer.PropertyChanged -= OnViewerDocumentChanged;
+
         _lastActiveTab = DocumentTabs.ActiveTab;
         _wiredPageTab = _lastActiveTab;
 
@@ -253,17 +377,25 @@ public partial class MainViewModel : ObservableObject
             _wiredFullscreenViewer = _wiredPageTab.Viewer;
             _wiredFullscreenViewer.PropertyChanged += OnViewerFullscreenChanged;
 
+            _wiredDocumentViewer = _wiredPageTab.Viewer;
+            _wiredDocumentViewer.PropertyChanged += OnViewerDocumentChanged;
+
             _isApplyingTabSwitch = true;
             IsSidebarExpanded = _wiredPageTab.IsSidebarExpanded;
             _isApplyingTabSwitch = false;
+
+            _wiredPageTab.Page.RefreshClipboardVisuals();
         }
 
         OnPropertyChanged(nameof(ActiveTab));
         OnPropertyChanged(nameof(Viewer));
         OnPropertyChanged(nameof(Page));
+        OnPropertyChanged(nameof(HasOpenDocument));
         ActiveTabContentChanged?.Invoke(this, EventArgs.Empty);
 
         (ShowPrintCommand as RelayCommand)?.NotifyCanExecuteChanged();
+        (ShowCompressCommand as RelayCommand)?.NotifyCanExecuteChanged();
+        (ShowPageManagerCommand as RelayCommand)?.NotifyCanExecuteChanged();
         (UndoCommand as RelayCommand)?.NotifyCanExecuteChanged();
         (RedoCommand as RelayCommand)?.NotifyCanExecuteChanged();
     }
@@ -286,6 +418,18 @@ public partial class MainViewModel : ObservableObject
             FullscreenChanged?.Invoke(this, viewer.IsFullscreen);
     }
 
+    private void OnViewerDocumentChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(ViewerViewModel.HasDocument) or nameof(ViewerViewModel.PageCount))
+        {
+            OnPropertyChanged(nameof(HasOpenDocument));
+            (ShowPrintCommand as RelayCommand)?.NotifyCanExecuteChanged();
+            (ShowCompressCommand as RelayCommand)?.NotifyCanExecuteChanged();
+            (ShowPageManagerCommand as RelayCommand)?.NotifyCanExecuteChanged();
+            _wiredPageTab?.Page.RefreshClipboardVisuals();
+        }
+    }
+
     private void RefreshLabels()
     {
         OpenLabel = _localization.GetString("Open");
@@ -296,10 +440,43 @@ public partial class MainViewModel : ObservableObject
         PageManagerLabel = _localization.GetString("PageManager");
         DropPdfLabel = _localization.GetString("DropPdfHere");
         RecentFilesLabel = _localization.GetString("RecentFiles");
+        RecentFilesShortLabel = _localization.GetString("RecentFilesShort");
         NoRecentDocumentsLabel = _localization.GetString("NoRecentDocuments");
         ClearRecentLabel = _localization.GetString("ClearRecent");
         CompressLabel = _localization.GetString("Compress");
+        LoadingMessage = _localization.GetString("LoadingMessage");
         SettingsLabel = _localization.GetString("Settings");
+        ZoomInLabel = _localization.GetString("ZoomIn");
+        ZoomOutLabel = _localization.GetString("ZoomOut");
+        ZoomResetLabel = _localization.GetString("ZoomReset");
+        RotateLabel = _localization.GetString("Rotate");
+        FullscreenLabel = _localization.GetString("Fullscreen");
+        PrevPageLabel = _localization.GetString("PrevPage");
+        NextPageLabel = _localization.GetString("NextPage");
+        PrintLabel = _localization.GetString("Print");
+        SearchPlaceholderLabel = _localization.GetString("SearchPlaceholder");
+        FitToWidthLabel = _localization.GetString("FitToWidth");
+        FitToWidthShortLabel = _localization.GetString("FitToWidthShort");
+        FullscreenShortLabel = _localization.GetString("FullscreenShort");
+        PageManagerShortLabel = _localization.GetString("PageManagerShort");
+        OpenFileTooltipLabel = _localization.GetString("OpenFileTooltip");
+        FullscreenTooltipLabel = _localization.GetString("FullscreenTooltip");
+        MergeLabel = _localization.GetString("Merge");
+        SplitLabel = _localization.GetString("Split");
+        MergePdfTooltipLabel = _localization.GetString("MergePdfTooltip");
+        SplitPdfTooltipLabel = _localization.GetString("SplitPdfTooltip");
+        PagePanelLabel = _localization.GetString("Pages");
+        ExtractLabel = _localization.GetString("Extract");
+        DeleteLabel = _localization.GetString("Delete");
+        Rotate90Label = _localization.GetString("Rotate90");
+        Rotate180Label = _localization.GetString("Rotate180");
+        Rotate270Label = _localization.GetString("Rotate270");
+        ExtractPagesLabel = _localization.GetString("ExtractPages");
+        ThumbnailDeletePageLabel = _localization.GetString("ThumbnailDeletePage");
+        ThumbnailRotatePageLabel = _localization.GetString("ThumbnailRotatePage");
+        ThumbnailExtractPageLabel = _localization.GetString("ThumbnailExtractPage");
+        SplitFromHereLabel = _localization.GetString("SplitFromHere");
+        OpenPageManagerLabel = _localization.GetString("OpenPageManager");
     }
 
     private void LoadSettings()
@@ -307,6 +484,11 @@ public partial class MainViewModel : ObservableObject
         Settings.LoadFromStore();
         var settings = _settingsStore.Load();
         ApplySettings(settings);
+    }
+
+    private async Task InitializeRecentFilesAsync()
+    {
+        await _recentFilesService.EnsureLoadedAsync();
         RefreshRecentFiles();
     }
 
@@ -314,6 +496,7 @@ public partial class MainViewModel : ObservableObject
     {
         _isApplyingSettings = true;
         IsSidebarExpanded = settings.SidebarVisible;
+        ThumbnailSize = Math.Clamp(settings.ThumbnailSize > 0 ? settings.ThumbnailSize : 120, 60, 240);
 
         if (DocumentTabs.ActiveTab is not null)
         {
@@ -354,6 +537,23 @@ public partial class MainViewModel : ObservableObject
 
         if (Settings.SidebarVisible != value)
             Settings.SidebarVisible = value;
+    }
+
+    partial void OnThumbnailSizeChanged(double value)
+    {
+        if (_isApplyingSettings)
+            return;
+
+        var clamped = Math.Clamp(value, 60, 240);
+        if (Math.Abs(clamped - value) > 0.01)
+        {
+            ThumbnailSize = clamped;
+            return;
+        }
+
+        var settings = _settingsStore.Load();
+        settings.ThumbnailSize = clamped;
+        _settingsStore.Save(settings);
     }
 
     public string? CurrentDocumentPath => ActiveTab?.FilePath;

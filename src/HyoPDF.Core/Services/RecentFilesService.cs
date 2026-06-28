@@ -12,6 +12,8 @@ public sealed class RecentFilesService : IRecentFilesService
     private readonly string _recentPath;
     private readonly string _legacySettingsPath;
     private List<RecentFile> _entries = [];
+    private bool _isLoaded;
+    private readonly SemaphoreSlim _loadLock = new(1, 1);
 
     public int MaxCount => 10;
 
@@ -23,11 +25,31 @@ public sealed class RecentFilesService : IRecentFilesService
         Directory.CreateDirectory(folder);
         _recentPath = Path.Combine(folder, "recent.json");
         _legacySettingsPath = Path.Combine(folder, "settings.json");
-        Load();
+    }
+
+    public async Task EnsureLoadedAsync()
+    {
+        if (_isLoaded)
+            return;
+
+        await _loadLock.WaitAsync();
+        try
+        {
+            if (_isLoaded)
+                return;
+
+            await Task.Run(Load);
+            _isLoaded = true;
+        }
+        finally
+        {
+            _loadLock.Release();
+        }
     }
 
     public void Add(string path)
     {
+        EnsureLoadedSync();
         if (string.IsNullOrWhiteSpace(path))
             return;
 
@@ -45,10 +67,15 @@ public sealed class RecentFilesService : IRecentFilesService
         Save();
     }
 
-    public IReadOnlyList<RecentFile> GetAll() => _entries.AsReadOnly();
+    public IReadOnlyList<RecentFile> GetAll()
+    {
+        EnsureLoadedSync();
+        return _entries.AsReadOnly();
+    }
 
     public void Remove(string path)
     {
+        EnsureLoadedSync();
         var removed = _entries.RemoveAll(r => string.Equals(r.Path, path, StringComparison.OrdinalIgnoreCase));
         if (removed > 0)
             Save();
@@ -56,11 +83,21 @@ public sealed class RecentFilesService : IRecentFilesService
 
     public void Clear()
     {
+        EnsureLoadedSync();
         if (_entries.Count == 0)
             return;
 
         _entries.Clear();
         Save();
+    }
+
+    private void EnsureLoadedSync()
+    {
+        if (_isLoaded)
+            return;
+
+        Load();
+        _isLoaded = true;
     }
 
     private void Load()

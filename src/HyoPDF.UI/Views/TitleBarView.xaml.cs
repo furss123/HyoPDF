@@ -10,13 +10,6 @@ public partial class TitleBarView : UserControl
     public TitleBarView()
     {
         InitializeComponent();
-        MouseLeftButtonDown += (_, e) =>
-        {
-            if (e.ClickCount == 2)
-                Window.GetWindow(this)?.ToggleMaximize();
-            else
-                Window.GetWindow(this)?.DragMove();
-        };
     }
 
     private void OnDragOver(object sender, DragEventArgs e)

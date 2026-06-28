@@ -1,131 +1,212 @@
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Microsoft.Win32;
+using System.Windows.Media;
+using HyoPDF.UI.ViewModels;
 
 namespace HyoPDF.UI.Views;
 
 public partial class MergeDialog : Window
 {
-    private readonly ObservableCollection<string> _files = [];
-    private readonly string? _currentDocumentPath;
+    private readonly MergeViewModel _viewModel;
     private Point _dragStart;
     private int _dragIndex = -1;
 
-    public IReadOnlyList<string> SelectedFiles => _files;
-    public bool MergeIntoCurrent { get; private set; }
-    public string? OutputPath { get; private set; }
-
-    public MergeDialog(string? currentDocumentPath)
+    public MergeDialog(MergeViewModel viewModel)
     {
         InitializeComponent();
-        _currentDocumentPath = currentDocumentPath;
-        FileList.ItemsSource = _files;
-
-        if (!string.IsNullOrEmpty(currentDocumentPath) && File.Exists(currentDocumentPath))
-            _files.Add(currentDocumentPath);
+        _viewModel = viewModel;
+        DataContext = viewModel;
+        viewModel.CloseRequested += OnCloseRequested;
+        Closed += (_, _) => viewModel.CloseRequested -= OnCloseRequested;
     }
 
-    private void OnAddFiles(object sender, RoutedEventArgs e)
+    private void OnCloseRequested(object? sender, EventArgs e)
     {
-        var dialog = new OpenFileDialog
-        {
-            Filter = "PDF files (*.pdf)|*.pdf",
-            Multiselect = true
-        };
-
-        if (dialog.ShowDialog() != true) return;
-        foreach (var file in dialog.FileNames)
-        {
-            if (!_files.Contains(file, StringComparer.OrdinalIgnoreCase))
-                _files.Add(file);
-        }
-    }
-
-    private void OnRemove(object sender, RoutedEventArgs e)
-    {
-        if (FileList.SelectedItem is string path)
-            _files.Remove(path);
-    }
-
-    private void OnIncludeCurrent(object sender, RoutedEventArgs e)
-    {
-        if (string.IsNullOrEmpty(_currentDocumentPath) || !File.Exists(_currentDocumentPath))
-            return;
-
-        if (!_files.Contains(_currentDocumentPath, StringComparer.OrdinalIgnoreCase))
-            _files.Insert(0, _currentDocumentPath);
-    }
-
-    private void OnMergeIntoCurrent(object sender, RoutedEventArgs e)
-    {
-        if (string.IsNullOrEmpty(_currentDocumentPath))
-        {
-            MessageBox.Show(this, "No document is open.", "Merge", MessageBoxButton.OK, MessageBoxImage.Information);
-            return;
-        }
-
-        if (_files.Count < 2)
-        {
-            MessageBox.Show(this, "Add at least two PDF files to merge.", "Merge", MessageBoxButton.OK, MessageBoxImage.Information);
-            return;
-        }
-
-        if (!_files.Contains(_currentDocumentPath, StringComparer.OrdinalIgnoreCase))
-            _files.Add(_currentDocumentPath);
-
-        MergeIntoCurrent = true;
-        OutputPath = _currentDocumentPath;
         DialogResult = true;
+        Close();
     }
 
-    private void OnMergeToFile(object sender, RoutedEventArgs e)
+    private void OnWindowDragOver(object sender, DragEventArgs e)
     {
-        if (_files.Count < 1)
+        if (!HasPdfFiles(e))
         {
-            MessageBox.Show(this, "Add at least one PDF file.", "Merge", MessageBoxButton.OK, MessageBoxImage.Information);
+            e.Effects = DragDropEffects.None;
+            e.Handled = true;
             return;
         }
 
-        var dialog = new SaveFileDialog
-        {
-            Filter = "PDF files (*.pdf)|*.pdf",
-            FileName = "merged.pdf"
-        };
+        e.Effects = DragDropEffects.Copy;
+        e.Handled = true;
+    }
 
-        if (dialog.ShowDialog() != true) return;
+    private void OnWindowDrop(object sender, DragEventArgs e)
+    {
+        if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+            return;
 
-        OutputPath = dialog.FileName;
-        MergeIntoCurrent = false;
-        DialogResult = true;
+        var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
+        _viewModel.AddFilesFromPaths(files);
+        e.Handled = true;
     }
 
     private void OnListMouseDown(object sender, MouseButtonEventArgs e)
     {
-        _dragIndex = FileList.SelectedIndex;
+        var listItem = FindAncestor<ListBoxItem>((DependencyObject)e.OriginalSource);
+        if (listItem is not null)
+        {
+            _dragIndex = FileList.ItemContainerGenerator.IndexFromContainer(listItem);
+            FileList.SelectedIndex = _dragIndex;
+        }
+        else
+        {
+            _dragIndex = -1;
+        }
+
         _dragStart = e.GetPosition(FileList);
     }
 
     private void OnListMouseMove(object sender, MouseEventArgs e)
     {
-        if (e.LeftButton != MouseButtonState.Pressed || _dragIndex < 0) return;
+        if (e.LeftButton != MouseButtonState.Pressed || _dragIndex < 0)
+            return;
+
         var pos = e.GetPosition(FileList);
-        if ((pos - _dragStart).Length > 6)
-            DragDrop.DoDragDrop(FileList, _dragIndex, DragDropEffects.Move);
+        if ((pos - _dragStart).Length <= 6)
+            return;
+
+        DragDrop.DoDragDrop(FileList, _dragIndex, DragDropEffects.Move);
+        HideDropIndicator();
+    }
+
+    private void OnListDragOver(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(typeof(int)))
+        {
+            e.Effects = DragDropEffects.Move;
+            ShowDropIndicator(GetDropIndex(e.GetPosition(FileList)));
+            e.Handled = true;
+            return;
+        }
+
+        if (HasPdfFiles(e))
+        {
+            e.Effects = DragDropEffects.Copy;
+            HideDropIndicator();
+            e.Handled = true;
+            return;
+        }
+
+        e.Effects = DragDropEffects.None;
+        e.Handled = true;
+    }
+
+    private void OnListDragLeave(object sender, DragEventArgs e)
+    {
+        HideDropIndicator();
+        e.Handled = true;
     }
 
     private void OnListDrop(object sender, DragEventArgs e)
     {
-        if (!e.Data.GetDataPresent(typeof(int))) return;
-        var source = (int)e.Data.GetData(typeof(int))!;
-        var target = FileList.SelectedIndex;
-        if (source < 0 || target < 0 || source == target) return;
+        HideDropIndicator();
 
-        var item = _files[source];
-        _files.RemoveAt(source);
-        _files.Insert(target, item);
-        FileList.SelectedIndex = target;
+        if (e.Data.GetDataPresent(typeof(int)))
+        {
+            var source = (int)e.Data.GetData(typeof(int))!;
+            var target = GetDropIndex(e.GetPosition(FileList));
+            if (source >= 0 && target >= 0 && source != target)
+                _viewModel.ReorderFile(source, target);
+
+            e.Handled = true;
+            return;
+        }
+
+        if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        {
+            var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
+            _viewModel.AddFilesFromPaths(files);
+            e.Handled = true;
+        }
+    }
+
+    private int GetDropIndex(Point position)
+    {
+        for (var i = 0; i < FileList.Items.Count; i++)
+        {
+            if (FileList.ItemContainerGenerator.ContainerFromIndex(i) is not FrameworkElement element)
+                continue;
+
+            var top = element.TranslatePoint(new Point(0, 0), FileList).Y;
+            var bottom = top + element.ActualHeight;
+            if (position.Y < top + element.ActualHeight / 2)
+                return i;
+            if (position.Y <= bottom)
+                return i + 1;
+        }
+
+        return FileList.Items.Count;
+    }
+
+    private void ShowDropIndicator(int index)
+    {
+        if (FileList.Items.Count == 0)
+        {
+            DropIndicator.Visibility = Visibility.Collapsed;
+            return;
+        }
+
+        var clamped = Math.Clamp(index, 0, FileList.Items.Count);
+        double y;
+
+        if (clamped >= FileList.Items.Count)
+        {
+            if (FileList.ItemContainerGenerator.ContainerFromIndex(FileList.Items.Count - 1) is not FrameworkElement last)
+            {
+                DropIndicator.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            y = last.TranslatePoint(new Point(0, last.ActualHeight), FileList).Y;
+        }
+        else if (FileList.ItemContainerGenerator.ContainerFromIndex(clamped) is FrameworkElement element)
+        {
+            y = element.TranslatePoint(new Point(0, 0), FileList).Y;
+        }
+        else
+        {
+            DropIndicator.Visibility = Visibility.Collapsed;
+            return;
+        }
+
+        DropIndicator.Margin = new Thickness(8, y, 8, 0);
+        DropIndicator.Visibility = Visibility.Visible;
+    }
+
+    private void HideDropIndicator()
+    {
+        DropIndicator.Visibility = Visibility.Collapsed;
+    }
+
+    private static bool HasPdfFiles(DragEventArgs e)
+    {
+        if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+            return false;
+
+        var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
+        return files.Any(f => f.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static T? FindAncestor<T>(DependencyObject? current) where T : DependencyObject
+    {
+        while (current is not null)
+        {
+            if (current is T match)
+                return match;
+
+            current = VisualTreeHelper.GetParent(current);
+        }
+
+        return null;
     }
 }

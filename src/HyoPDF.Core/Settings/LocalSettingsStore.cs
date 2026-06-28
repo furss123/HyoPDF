@@ -5,7 +5,12 @@ namespace HyoPDF.Core.Settings;
 
 public sealed class LocalSettingsStore : ILocalSettingsStore
 {
-    private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        WriteIndented = true,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNameCaseInsensitive = true
+    };
 
     private readonly string _settingsPath;
 
@@ -20,13 +25,15 @@ public sealed class LocalSettingsStore : ILocalSettingsStore
     public AppSettings Load()
     {
         if (!File.Exists(_settingsPath))
-            return new AppSettings();
+            return new AppSettings { Language = "ko" };
 
         try
         {
             var json = File.ReadAllText(_settingsPath);
             var settings = JsonSerializer.Deserialize<AppSettings>(json, JsonOptions) ?? new AppSettings();
             MigrateLegacySettings(json, settings);
+            settings.Language = NormalizeLanguage(settings.Language);
+            ClampWindowSize(settings);
             return settings;
         }
         catch
@@ -57,4 +64,18 @@ public sealed class LocalSettingsStore : ILocalSettingsStore
             settings.DefaultZoom = (int)Math.Clamp(zoom.GetDouble(), 25, 500);
         }
     }
+
+    private static void ClampWindowSize(AppSettings settings)
+    {
+        settings.LastWindowSize.Width = Math.Max(580, Math.Min(settings.LastWindowSize.Width, 1600));
+        settings.LastWindowSize.Height = Math.Max(440, Math.Min(settings.LastWindowSize.Height, 1200));
+    }
+
+    private static string NormalizeLanguage(string? language) =>
+        language?.Trim().ToLowerInvariant() switch
+        {
+            "en" => "en",
+            "ko" => "ko",
+            _ => "ko"
+        };
 }

@@ -17,6 +17,9 @@ public partial class PdfPageItemViewModel : ObservableObject
     private bool _isSelected;
 
     [ObservableProperty]
+    private bool _isCut;
+
+    [ObservableProperty]
     private ImageSource? _thumbnail;
 
     [ObservableProperty]

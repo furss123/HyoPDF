@@ -49,4 +49,21 @@ public static class PageRangeParser
 
         return indices.ToArray();
     }
+
+    public static bool TryParse(string? input, int pageCount, out int[] indices, out string? errorMessage)
+    {
+        indices = [];
+        errorMessage = null;
+
+        try
+        {
+            indices = Parse(input, pageCount);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+            return false;
+        }
+    }
 }

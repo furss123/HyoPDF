@@ -2,15 +2,18 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Navigation;
+using HyoPDF.Core.Localization;
 
 namespace HyoPDF.UI.Views;
 
 public partial class AboutWindow : Window
 {
-    public AboutWindow()
+    public AboutWindow(ILocalizationService localization)
     {
         InitializeComponent();
-        DataContext = new AboutViewModel();
+        Title = localization.GetString("AboutTitle");
+        OkButton.Content = localization.GetString("Ok");
+        DataContext = new AboutViewModel(localization);
     }
 
     private void OnCloseClick(object sender, RoutedEventArgs e) => Close();
@@ -24,7 +27,12 @@ public partial class AboutWindow : Window
 
 public sealed class AboutViewModel
 {
-    public string VersionText { get; } = $"Version {GetProductVersion()}";
+    public string VersionText { get; }
+
+    public AboutViewModel(ILocalizationService localization)
+    {
+        VersionText = $"{localization.GetString("About")} {GetProductVersion()}";
+    }
 
     private static string GetProductVersion()
     {

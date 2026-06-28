@@ -3,18 +3,47 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:views="clr-namespace:HyoPDF.UI.Views"
         xmlns:conv="clr-namespace:HyoPDF.UI.Converters"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         Title="HyoPDF"
-        Width="1280"
-        Height="800"
-        MinWidth="900"
-        MinHeight="600"
+        Icon="{StaticResource AppIconImage}"
+        Width="580"
+        Height="440"
+        MinWidth="580"
+        MinHeight="440"
         WindowStartupLocation="CenterScreen"
+        WindowState="Normal"
         WindowStyle="None"
         AllowsTransparency="False"
         Background="{DynamicResource BgBaseBrush}">
 
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="32"
+                            ResizeBorderThickness="6"
+                            CornerRadius="0"
+                            GlassFrameThickness="0"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+
     <Window.Resources>
         <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
+        <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis" />
+
+        <Style x:Key="SidebarGridSplitter" TargetType="GridSplitter">
+            <Setter Property="Width" Value="4" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Cursor" Value="SizeWE" />
+            <Setter Property="ShowsPreview" Value="False" />
+            <Setter Property="ResizeDirection" Value="Columns" />
+            <Setter Property="ResizeBehavior" Value="PreviousAndNext" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2A2A2A" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <Grid x:Name="RootGrid">
@@ -28,20 +57,91 @@
         <views:TitleBarView Grid.Row="0" DataContext="{Binding}" />
         <views:ToolbarView x:Name="Toolbar" Grid.Row="1" DataContext="{Binding}" />
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" ClipToBounds="False">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition x:Name="SidebarColumn" Width="180" MinWidth="160" MaxWidth="400" />
+                <ColumnDefinition x:Name="SidebarSplitterColumn" Width="4" MinWidth="0" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <views:SidebarView Grid.Column="0" DataContext="{Binding}" />
-            <views:ViewerView Grid.Column="1" DataContext="{Binding}" />
-            <views:PageManagerView Grid.Column="2"
-                                   DataContext="{Binding}"
-                                   Visibility="{Binding Page.IsPanelOpen, Converter={StaticResource BoolToVis}}" />
+            <Grid x:Name="SidebarArea"
+                  Grid.Column="0"
+                  Background="{DynamicResource SidebarBgBrush}"
+                  ClipToBounds="True">
+                <views:SidebarView DataContext="{Binding}"
+                                   VerticalAlignment="Stretch"
+                                   HorizontalAlignment="Stretch" />
+            </Grid>
+
+            <GridSplitter x:Name="SidebarGridSplitter"
+                          Grid.Column="1"
+                          Style="{StaticResource SidebarGridSplitter}" />
+
+            <Button x:Name="SidebarToggleButton"
+                    Grid.Column="2"
+                    Width="20"
+                    Height="48"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Panel.ZIndex="10"
+                    Click="ToggleSidebar_Click"
+                    Background="#1E1E1E"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    ToolTip="사이드바 접기"
+                    WindowChrome.IsHitTestVisibleInChrome="True">
+                <materialDesign:PackIcon x:Name="SidebarToggleIcon"
+                                         Kind="ChevronLeft"
+                                         Width="16"
+                                         Height="16"
+                                         Foreground="#A0A0A0" />
+            </Button>
+
+            <Grid x:Name="ViewerArea" Grid.Column="2" Focusable="True">
+                <views:ViewerView x:Name="ViewerViewControl"
+                                  DataContext="{Binding}"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch" />
+
+                <Grid Visibility="{Binding Viewer.HasDocument, Converter={StaticResource InverseBoolToVis}}">
+                    <StackPanel HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                UseLayoutRounding="True">
+                        <Image Source="{StaticResource DeskIllustrationImage}"
+                               Width="300"
+                               Height="300"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Center"
+                               RenderOptions.BitmapScalingMode="HighQuality"
+                               Margin="0,0,0,20" />
+                        <TextBlock Text="PDF 파일을 열어 시작하세요"
+                                   FontFamily="{StaticResource FontFamilyPrimary}"
+                                   FontSize="16"
+                                   Foreground="#F0F0F0"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,4" />
+                        <TextBlock Text="파일을 드래그하거나 열기 버튼을 클릭하세요"
+                                   FontFamily="{StaticResource FontFamilyPrimary}"
+                                   FontSize="13"
+                                   Foreground="#A0A0A0"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   Margin="0,0,0,24" />
+                        <Button Content="열기"
+                                Style="{StaticResource AccentButton}"
+                                Command="{Binding OpenFileCommand}"
+                                HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+
         </Grid>
 
         <views:StatusBarView Grid.Row="3" DataContext="{Binding}" />
+
+        <views:LoadingOverlay Grid.RowSpan="4"
+                              Panel.ZIndex="1000"
+                              IsShown="{Binding Viewer.IsLoading}"
+                              Message="{Binding Viewer.LoadingMessage}" />
     </Grid>
 </Window>

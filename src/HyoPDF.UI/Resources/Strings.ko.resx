@@ -86,10 +86,16 @@
     <value>정보</value>
   </data>
   <data name="PageManager" xml:space="preserve">
-    <value>페이지</value>
+    <value>페이지 관리</value>
+  </data>
+  <data name="PageManagerShort" xml:space="preserve">
+    <value>관리</value>
   </data>
   <data name="RecentFiles" xml:space="preserve">
     <value>최근 파일</value>
+  </data>
+  <data name="RecentFilesShort" xml:space="preserve">
+    <value>최근</value>
   </data>
   <data name="NoRecentDocuments" xml:space="preserve">
     <value>최근 문서가 없습니다</value>
@@ -107,25 +113,28 @@
     <value>설정</value>
   </data>
   <data name="CompressLevel1" xml:space="preserve">
-    <value>최고 품질</value>
+    <value>최소 용량</value>
   </data>
   <data name="CompressLevel2" xml:space="preserve">
-    <value>고품질</value>
+    <value>저품질</value>
   </data>
   <data name="CompressLevel3" xml:space="preserve">
     <value>균형</value>
   </data>
   <data name="CompressLevel4" xml:space="preserve">
-    <value>저품질</value>
+    <value>고품질</value>
   </data>
   <data name="CompressLevel5" xml:space="preserve">
-    <value>최소 크기</value>
+    <value>최고 화질</value>
   </data>
   <data name="CompressComplete" xml:space="preserve">
     <value>압축이 완료되었습니다</value>
   </data>
   <data name="CompressCancelled" xml:space="preserve">
     <value>압축이 취소되었습니다</value>
+  </data>
+  <data name="CompressFailed" xml:space="preserve">
+    <value>파일 압축에 실패했습니다: {0}</value>
   </data>
   <data name="MergeComplete" xml:space="preserve">
     <value>병합이 완료되었습니다</value>
@@ -135,5 +144,338 @@
   </data>
   <data name="ExportComplete" xml:space="preserve">
     <value>보내기가 완료되었습니다</value>
+  </data>
+  <data name="ConvertToImageComplete" xml:space="preserve">
+    <value>이미지 변환이 완료되었습니다</value>
+  </data>
+  <data name="ConvertToImageFailed" xml:space="preserve">
+    <value>이미지 변환에 실패했습니다</value>
+  </data>
+  <data name="Appearance" xml:space="preserve">
+    <value>화면 설정</value>
+  </data>
+  <data name="Viewer" xml:space="preserve">
+    <value>뷰어 설정</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>테마</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>언어</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>닫기</value>
+  </data>
+  <data name="ShowSidebarByDefault" xml:space="preserve">
+    <value>사이드바 기본 표시</value>
+  </data>
+  <data name="DefaultZoom" xml:space="preserve">
+    <value>기본 확대/축소 (%)</value>
+  </data>
+  <data name="ZoomIn" xml:space="preserve">
+    <value>확대</value>
+  </data>
+  <data name="ZoomOut" xml:space="preserve">
+    <value>축소</value>
+  </data>
+  <data name="Fullscreen" xml:space="preserve">
+    <value>전체화면</value>
+  </data>
+  <data name="FullscreenShort" xml:space="preserve">
+    <value>전체</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>인쇄</value>
+  </data>
+  <data name="ZoomReset" xml:space="preserve">
+    <value>100%</value>
+  </data>
+  <data name="FitToWidth" xml:space="preserve">
+    <value>너비 맞춤</value>
+  </data>
+  <data name="FitToWidthShort" xml:space="preserve">
+    <value>맞춤</value>
+  </data>
+  <data name="PrevPage" xml:space="preserve">
+    <value>이전</value>
+  </data>
+  <data name="NextPage" xml:space="preserve">
+    <value>다음</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>검색...</value>
+  </data>
+  <data name="Merge" xml:space="preserve">
+    <value>병합</value>
+  </data>
+  <data name="Split" xml:space="preserve">
+    <value>분할</value>
+  </data>
+  <data name="Extract" xml:space="preserve">
+    <value>추출</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>삭제</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>저장</value>
+  </data>
+  <data name="OutputPath" xml:space="preserve">
+    <value>저장 위치</value>
+  </data>
+  <data name="QualityLevel" xml:space="preserve">
+    <value>압축 품질</value>
+  </data>
+  <data name="CompressDialogTitle" xml:space="preserve">
+    <value>PDF 압축</value>
+  </data>
+  <data name="CompressOriginalSize" xml:space="preserve">
+    <value>원본 크기</value>
+  </data>
+  <data name="CompressEstimatedSize" xml:space="preserve">
+    <value>예상 크기</value>
+  </data>
+  <data name="CompressStart" xml:space="preserve">
+    <value>압축 시작</value>
+  </data>
+  <data name="CompressSelectFile" xml:space="preserve">
+    <value>파일 선택</value>
+  </data>
+  <data name="CompressChange" xml:space="preserve">
+    <value>변경</value>
+  </data>
+  <data name="Compressing" xml:space="preserve">
+    <value>압축 중...</value>
+  </data>
+  <data name="Browse" xml:space="preserve">
+    <value>찾기</value>
+  </data>
+  <data name="DragPdfHint" xml:space="preserve">
+    <value>PDF 파일을 드래그하세요</value>
+  </data>
+  <data name="OrText" xml:space="preserve">
+    <value>또는</value>
+  </data>
+  <data name="AddFiles" xml:space="preserve">
+    <value>파일 추가</value>
+  </data>
+  <data name="MergeDialogTitle" xml:space="preserve">
+    <value>PDF 병합</value>
+  </data>
+  <data name="MergeFiles" xml:space="preserve">
+    <value>병합할 파일</value>
+  </data>
+  <data name="MergeStart" xml:space="preserve">
+    <value>병합 시작</value>
+  </data>
+  <data name="PrintDialogTitle" xml:space="preserve">
+    <value>인쇄</value>
+  </data>
+  <data name="Printer" xml:space="preserve">
+    <value>프린터</value>
+  </data>
+  <data name="PageRange" xml:space="preserve">
+    <value>페이지 범위</value>
+  </data>
+  <data name="AllPages" xml:space="preserve">
+    <value>전체</value>
+  </data>
+  <data name="CurrentPage" xml:space="preserve">
+    <value>현재 페이지</value>
+  </data>
+  <data name="CustomRange" xml:space="preserve">
+    <value>직접 입력</value>
+  </data>
+  <data name="PagesPerSheet" xml:space="preserve">
+    <value>한 장에 여러 페이지</value>
+  </data>
+  <data name="DuplexPrint" xml:space="preserve">
+    <value>양면 인쇄</value>
+  </data>
+  <data name="FitToPage" xml:space="preserve">
+    <value>페이지에 맞춤</value>
+  </data>
+  <data name="Copies" xml:space="preserve">
+    <value>매수</value>
+  </data>
+  <data name="PrintPreview" xml:space="preserve">
+    <value>미리보기</value>
+  </data>
+  <data name="PrintError" xml:space="preserve">
+    <value>인쇄 중 오류가 발생했습니다</value>
+  </data>
+  <data name="PrintStarted" xml:space="preserve">
+    <value>인쇄를 시작했습니다</value>
+  </data>
+  <data name="PrintPreparing" xml:space="preserve">
+    <value>인쇄 준비 중...</value>
+  </data>
+  <data name="PrintCompleted" xml:space="preserve">
+    <value>인쇄가 완료되었습니다</value>
+  </data>
+  <data name="PrintNoDocument" xml:space="preserve">
+    <value>열린 문서가 없습니다.</value>
+  </data>
+  <data name="PrintFileNotFound" xml:space="preserve">
+    <value>문서 파일을 찾을 수 없습니다.</value>
+  </data>
+  <data name="PrintNoPages" xml:space="preserve">
+    <value>인쇄할 페이지가 없습니다.</value>
+  </data>
+  <data name="PrintNoPrinter" xml:space="preserve">
+    <value>설치된 프린터가 없습니다</value>
+  </data>
+  <data name="PrintCollate" xml:space="preserve">
+    <value>한 부씩 인쇄</value>
+  </data>
+  <data name="PrintGrayscale" xml:space="preserve">
+    <value>회색조 인쇄</value>
+  </data>
+  <data name="PrintLayout" xml:space="preserve">
+    <value>레이아웃</value>
+  </data>
+  <data name="PrintPageFit" xml:space="preserve">
+    <value>페이지 맞춤</value>
+  </data>
+  <data name="PrintActualSize" xml:space="preserve">
+    <value>실제 크기</value>
+  </data>
+  <data name="PrintCustomScale" xml:space="preserve">
+    <value>사용자 지정 %</value>
+  </data>
+  <data name="PrintStart" xml:space="preserve">
+    <value>인쇄 시작</value>
+  </data>
+  <data name="PrintPrinterSettings" xml:space="preserve">
+    <value>기본 설정</value>
+  </data>
+  <data name="PrintTotalSheetsFormat" xml:space="preserve">
+    <value>총 {0}장 인쇄됩니다</value>
+  </data>
+  <data name="PrintInvalidRange" xml:space="preserve">
+    <value>올바른 페이지 범위를 입력하세요.</value>
+  </data>
+  <data name="SplitDialogTitle" xml:space="preserve">
+    <value>PDF 분할</value>
+  </data>
+  <data name="SplitPages" xml:space="preserve">
+    <value>분할 페이지</value>
+  </data>
+  <data name="SplitOutputFolder" xml:space="preserve">
+    <value>저장 폴더</value>
+  </data>
+  <data name="SplitStart" xml:space="preserve">
+    <value>분할 시작</value>
+  </data>
+  <data name="OpenFileTooltip" xml:space="preserve">
+    <value>PDF 파일 열기 (Ctrl+O)</value>
+  </data>
+  <data name="FullscreenTooltip" xml:space="preserve">
+    <value>전체화면 (F11)</value>
+  </data>
+  <data name="MergePdfTooltip" xml:space="preserve">
+    <value>PDF 병합</value>
+  </data>
+  <data name="SplitPdfTooltip" xml:space="preserve">
+    <value>PDF 분할</value>
+  </data>
+  <data name="Rotate90" xml:space="preserve">
+    <value>90° 회전</value>
+  </data>
+  <data name="Rotate180" xml:space="preserve">
+    <value>180° 회전</value>
+  </data>
+  <data name="Rotate270" xml:space="preserve">
+    <value>270° 회전</value>
+  </data>
+  <data name="ExtractPages" xml:space="preserve">
+    <value>페이지 추출...</value>
+  </data>
+  <data name="ExtractPagesComplete" xml:space="preserve">
+    <value>페이지 추출이 완료되었습니다</value>
+  </data>
+  <data name="ExtractPagesFailed" xml:space="preserve">
+    <value>추출에 실패했습니다</value>
+  </data>
+  <data name="DeletePagesComplete" xml:space="preserve">
+    <value>페이지가 삭제되었습니다</value>
+  </data>
+  <data name="DeletePagesFailed" xml:space="preserve">
+    <value>삭제에 실패했습니다</value>
+  </data>
+  <data name="AllPagesDeleted" xml:space="preserve">
+    <value>모든 페이지가 삭제되었습니다</value>
+  </data>
+  <data name="CopyPagesComplete" xml:space="preserve">
+    <value>페이지가 복사되었습니다</value>
+  </data>
+  <data name="CopyPagesFailed" xml:space="preserve">
+    <value>복사에 실패했습니다</value>
+  </data>
+  <data name="CutPagesComplete" xml:space="preserve">
+    <value>페이지가 잘라내기 되었습니다</value>
+  </data>
+  <data name="PastePagesComplete" xml:space="preserve">
+    <value>페이지가 붙여넣어졌습니다</value>
+  </data>
+  <data name="PastePagesFailed" xml:space="preserve">
+    <value>붙여넣기에 실패했습니다</value>
+  </data>
+  <data name="LoadingMessage" xml:space="preserve">
+    <value>처리 중...</value>
+  </data>
+  <data name="LoadingPdfOpen" xml:space="preserve">
+    <value>PDF를 불러오는 중...</value>
+  </data>
+  <data name="LoadingPagesCount" xml:space="preserve">
+    <value>페이지 {0}개 로딩 중...</value>
+  </data>
+  <data name="LoadingThumbnailsGenerating" xml:space="preserve">
+    <value>썸네일 생성 중...</value>
+  </data>
+  <data name="ImageExportDialogTitle" xml:space="preserve">
+    <value>이미지 변환 설정</value>
+  </data>
+  <data name="ImageExportFormat" xml:space="preserve">
+    <value>형식</value>
+  </data>
+  <data name="ImageExportQuality" xml:space="preserve">
+    <value>화질 (JPG만 해당)</value>
+  </data>
+  <data name="ImageExportQualityHint" xml:space="preserve">
+    <value>PNG/BMP 선택 시 비활성화</value>
+  </data>
+  <data name="ImageExportOutputFolder" xml:space="preserve">
+    <value>저장 폴더</value>
+  </data>
+  <data name="ImageExportStart" xml:space="preserve">
+    <value>변환 시작</value>
+  </data>
+  <data name="ImageExportOpenFolder" xml:space="preserve">
+    <value>폴더 열기</value>
+  </data>
+  <data name="ThumbnailDeletePage" xml:space="preserve">
+    <value>페이지 삭제</value>
+  </data>
+  <data name="ThumbnailRotatePage" xml:space="preserve">
+    <value>페이지 회전</value>
+  </data>
+  <data name="ThumbnailExtractPage" xml:space="preserve">
+    <value>페이지 추출</value>
+  </data>
+  <data name="SplitFromHere" xml:space="preserve">
+    <value>이 페이지부터 분할</value>
+  </data>
+  <data name="OpenPageManager" xml:space="preserve">
+    <value>페이지 관리 열기</value>
+  </data>
+  <data name="Ok" xml:space="preserve">
+    <value>확인</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>HyoPDF 정보</value>
   </data>
 </root>

@@ -1,88 +1,385 @@
 <UserControl x:Class="HyoPDF.UI.Views.ViewerView"
+
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+
              xmlns:behaviors="clr-namespace:HyoPDF.UI.Behaviors"
+
              xmlns:conv="clr-namespace:HyoPDF.UI.Converters"
+
              xmlns:vm="clr-namespace:HyoPDF.UI.ViewModels"
+
              behaviors:DragDropBehavior.IsEnabled="True"
-             Background="{DynamicResource BgBaseBrush}">
+
+             HorizontalAlignment="Stretch"
+
+             VerticalAlignment="Stretch"
+
+             Background="{DynamicResource ViewerBgBrush}">
+
     <UserControl.Resources>
+
         <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
-        <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolVis" />
+
+
+
+        <Style x:Key="ViewerPageListItem" TargetType="ListBoxItem">
+
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+
+            <Setter Property="Padding" Value="0" />
+
+            <Setter Property="Margin" Value="0" />
+
+            <Setter Property="Background" Value="Transparent" />
+
+            <Setter Property="BorderThickness" Value="0" />
+
+            <Setter Property="Focusable" Value="False" />
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="ListBoxItem">
+
+                        <ContentPresenter />
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+
+            </Setter>
+
+        </Style>
+
+
+
+        <Style x:Key="ScrollBarTrackRepeatButton" TargetType="RepeatButton">
+
+            <Setter Property="Background" Value="Transparent" />
+
+            <Setter Property="Opacity" Value="0.01" />
+
+            <Setter Property="Cursor" Value="Arrow" />
+
+            <Setter Property="Focusable" Value="False" />
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="RepeatButton">
+
+                        <Border Background="{TemplateBinding Background}" />
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+
+                                <Setter Property="Background" Value="#0DFFFFFF" />
+
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+
+                                <Setter Property="Background" Value="#1AFFFFFF" />
+
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+
+            </Setter>
+
+        </Style>
+
+
+
+        <Style x:Key="ViewerScrollBar" TargetType="ScrollBar">
+
+            <Style.Triggers>
+
+                <Trigger Property="Orientation" Value="Vertical">
+
+                    <Setter Property="Width" Value="12" />
+
+                    <Setter Property="Template">
+
+                        <Setter.Value>
+
+                            <ControlTemplate TargetType="ScrollBar">
+
+                                <Grid Background="#1A1A1A" Width="12">
+
+                                    <Track x:Name="PART_Track"
+
+                                           IsDirectionReversed="True">
+
+                                        <Track.DecreaseRepeatButton>
+
+                                            <RepeatButton Command="ScrollBar.PageUpCommand"
+
+                                                          Style="{StaticResource ScrollBarTrackRepeatButton}" />
+
+                                        </Track.DecreaseRepeatButton>
+
+                                        <Track.IncreaseRepeatButton>
+
+                                            <RepeatButton Command="ScrollBar.PageDownCommand"
+
+                                                          Style="{StaticResource ScrollBarTrackRepeatButton}" />
+
+                                        </Track.IncreaseRepeatButton>
+
+                                        <Track.Thumb>
+
+                                            <Thumb>
+
+                                                <Thumb.Template>
+
+                                                    <ControlTemplate TargetType="Thumb">
+
+                                                        <Border x:Name="ThumbBorder"
+
+                                                                Background="#505050"
+
+                                                                CornerRadius="6"
+
+                                                                Margin="3,2"
+
+                                                                MinHeight="60" />
+
+                                                        <ControlTemplate.Triggers>
+
+                                                            <Trigger Property="IsMouseOver"
+
+                                                                     Value="True">
+
+                                                                <Setter TargetName="ThumbBorder"
+
+                                                                        Property="Background"
+
+                                                                        Value="#787878" />
+
+                                                            </Trigger>
+
+                                                        </ControlTemplate.Triggers>
+
+                                                    </ControlTemplate>
+
+                                                </Thumb.Template>
+
+                                            </Thumb>
+
+                                        </Track.Thumb>
+
+                                    </Track>
+
+                                </Grid>
+
+                            </ControlTemplate>
+
+                        </Setter.Value>
+
+                    </Setter>
+
+                </Trigger>
+
+            </Style.Triggers>
+
+        </Style>
+
+
+
         <DataTemplate DataType="{x:Type vm:PdfPageItemViewModel}" x:Key="PageTemplate">
-            <Grid Margin="0,12" HorizontalAlignment="Center" Tag="{Binding PageIndex}">
-                <Border Background="{DynamicResource BgSurfaceBrush}"
-                        CornerRadius="{StaticResource RadiusMd}"
-                        Padding="8"
-                        BorderBrush="{DynamicResource BorderBrush}"
-                        BorderThickness="1">
+
+            <Grid Margin="0,8" HorizontalAlignment="Center" Tag="{Binding PageIndex}">
+
+                <Border Background="White"
+
+                        CornerRadius="{StaticResource RadiusXs}"
+
+                        ClipToBounds="True">
+
                     <Grid Width="{Binding DisplayWidth}"
+
                           Height="{Binding DisplayHeight}">
+
                         <Image Source="{Binding PageImage}"
+
                                Stretch="Fill"
-                               RenderOptions.BitmapScalingMode="HighQuality" />
+
+                               RenderOptions.BitmapScalingMode="Linear" />
+
                         <ItemsControl ItemsSource="{Binding HighlightRects}">
+
                             <ItemsControl.ItemsPanel>
+
                                 <ItemsPanelTemplate>
+
                                     <Canvas />
+
                                 </ItemsPanelTemplate>
+
                             </ItemsControl.ItemsPanel>
+
                             <ItemsControl.ItemContainerStyle>
+
                                 <Style TargetType="ContentPresenter">
+
                                     <Setter Property="Canvas.Left" Value="{Binding X}" />
+
                                     <Setter Property="Canvas.Top" Value="{Binding Y}" />
+
                                 </Style>
+
                             </ItemsControl.ItemContainerStyle>
+
                             <ItemsControl.ItemTemplate>
+
                                 <DataTemplate>
+
                                     <Rectangle Fill="#400078D4"
+
                                                Stroke="{DynamicResource AccentBrush}"
+
                                                StrokeThickness="1"
+
                                                RadiusX="2"
+
                                                RadiusY="2"
+
                                                Width="{Binding Width}"
+
                                                Height="{Binding Height}" />
+
                                 </DataTemplate>
+
                             </ItemsControl.ItemTemplate>
+
                         </ItemsControl>
+
                     </Grid>
+
                 </Border>
+
             </Grid>
+
         </DataTemplate>
+
     </UserControl.Resources>
 
-    <Grid>
-        <ScrollViewer x:Name="PageScrollViewer"
-                      DataContext="{Binding Viewer}"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled"
-                      PanningMode="VerticalOnly"
-                      ScrollChanged="OnScrollChanged"
-                      Visibility="{Binding HasDocument, Converter={StaticResource BoolToVis}}">
-            <ItemsControl x:Name="PagesItemsControl"
-                          ItemsSource="{Binding Pages}"
-                          ItemTemplate="{StaticResource PageTemplate}"
-                          HorizontalAlignment="Center"
-                          Margin="24,16" />
-        </ScrollViewer>
 
-        <Border Style="{StaticResource PanelBorder}"
-                Margin="24"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                MinWidth="480"
-                MinHeight="360"
-                Visibility="{Binding Viewer.HasDocument, Converter={StaticResource InverseBoolVis}}">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock Text="📄"
-                           FontSize="48"
-                           HorizontalAlignment="Center"
-                           Margin="0,0,0,16" />
-                <TextBlock Text="{Binding DropPdfLabel}"
-                           Style="{StaticResource TextSecondary}"
-                           HorizontalAlignment="Center"
-                           TextAlignment="Center" />
-            </StackPanel>
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+        <ListBox x:Name="PagesList"
+
+                 DataContext="{Binding Viewer}"
+
+                 ItemsSource="{Binding Pages}"
+
+                 ItemTemplate="{StaticResource PageTemplate}"
+
+                 ItemContainerStyle="{StaticResource ViewerPageListItem}"
+
+                 Background="Transparent"
+
+                 BorderThickness="0"
+
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+
+                 ScrollViewer.CanContentScroll="False"
+
+                 ScrollViewer.ScrollChanged="OnScrollChanged"
+
+                 VirtualizingPanel.IsVirtualizing="True"
+
+                 VirtualizingPanel.ScrollUnit="Pixel"
+
+                 RenderTransformOrigin="0.5,0"
+
+                 Margin="32,24"
+
+                 Visibility="{Binding HasDocument, Converter={StaticResource BoolToVis}}">
+
+            <ListBox.Resources>
+
+                <Style TargetType="ScrollBar"
+
+                       BasedOn="{StaticResource ViewerScrollBar}" />
+
+            </ListBox.Resources>
+
+            <ListBox.RenderTransform>
+
+                <ScaleTransform ScaleX="{Binding ZoomFactor}"
+
+                                ScaleY="{Binding ZoomFactor}" />
+
+            </ListBox.RenderTransform>
+
+            <ListBox.ItemsPanel>
+
+                <ItemsPanelTemplate>
+
+                    <VirtualizingStackPanel />
+
+                </ItemsPanelTemplate>
+
+            </ListBox.ItemsPanel>
+
+        </ListBox>
+
+
+
+        <Border x:Name="ScrollPageIndicator"
+
+                Background="#1C1C1C"
+
+                BorderBrush="#333333"
+
+                BorderThickness="1"
+
+                CornerRadius="8"
+
+                Padding="14,10"
+
+                HorizontalAlignment="Right"
+
+                VerticalAlignment="Top"
+
+                Margin="0,0,20,0"
+
+                Visibility="Collapsed"
+
+                Opacity="0"
+
+                Panel.ZIndex="100"
+
+                IsHitTestVisible="False">
+
+            <TextBlock x:Name="ScrollPageText"
+
+                       FontFamily="{StaticResource FontFamilyPrimary}"
+
+                       FontSize="13"
+
+                       Foreground="#E0E0E0"
+
+                       FontWeight="Medium" />
+
         </Border>
+
     </Grid>
+
 </UserControl>
+
+

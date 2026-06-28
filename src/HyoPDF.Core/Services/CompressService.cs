@@ -1,15 +1,17 @@
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using HyoPDF.Core.Compression;
 using iTextSharp.text.pdf;
 using DrawingImage = System.Drawing.Image;
-using PdfImage = iTextSharp.text.Image;
 
 namespace HyoPDF.Core.Services;
 
 public sealed class CompressService : ICompressService
 {
+    private const float ReferenceDpi = 150f;
+
     public long EstimateCompressedSize(long originalSize, CompressionLevel level) =>
         (long)Math.Max(1, originalSize * level.EstimatedSizeRatio());
 
@@ -23,36 +25,106 @@ public sealed class CompressService : ICompressService
         ArgumentException.ThrowIfNullOrWhiteSpace(inputPath);
         ArgumentException.ThrowIfNullOrWhiteSpace(outputPath);
 
-        var tempPath = outputPath + ".tmp";
-        if (File.Exists(tempPath))
-            File.Delete(tempPath);
+        var tempInput = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
+        var tempOutput = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
 
+        try
+        {
+            CopySourceFile(inputPath, tempInput);
+            CompressPdfFromFile(tempInput, tempOutput, level, progress, cancellationToken);
+
+            if (File.Exists(outputPath))
+                File.Delete(outputPath);
+
+            File.Move(tempOutput, outputPath, overwrite: true);
+        }
+        finally
+        {
+            if (File.Exists(tempInput))
+                File.Delete(tempInput);
+
+            if (File.Exists(tempOutput))
+                File.Delete(tempOutput);
+        }
+    }
+
+    private static void CompressPdfFromFile(
+        string inputPath,
+        string outputPath,
+        CompressionLevel level,
+        IProgress<double>? progress,
+        CancellationToken cancellationToken)
+    {
+        if (level == CompressionLevel.Level5)
+        {
+            File.Copy(inputPath, outputPath, overwrite: true);
+            progress?.Report(100);
+            return;
+        }
+
+        CompressWithIText(inputPath, outputPath, level, progress, cancellationToken);
+    }
+
+    private static void CopySourceFile(string sourcePath, string destPath)
+    {
+        const int bufferSize = 1024 * 1024;
+        using var input = new FileStream(
+            sourcePath,
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.ReadWrite | FileShare.Delete);
+        using var output = new FileStream(destPath, FileMode.Create, FileAccess.Write, FileShare.None);
+        input.CopyTo(output, bufferSize);
+    }
+
+    private static void CompressWithIText(
+        string inputPath,
+        string outputPath,
+        CompressionLevel level,
+        IProgress<double>? progress,
+        CancellationToken cancellationToken)
+    {
         PdfReader? reader = null;
         PdfStamper? stamper = null;
 
         try
         {
             reader = new PdfReader(inputPath);
-            using var outputStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write);
+            using var outputStream = new FileStream(outputPath, FileMode.Create, FileAccess.Write);
             stamper = new PdfStamper(reader, outputStream, PdfWriter.VERSION_1_5);
 
-            var writer = stamper.Writer;
-            writer.CompressionLevel = GetStreamCompression(level);
-            writer.SetFullCompression();
+            stamper.Writer.CompressionLevel = PdfStream.BEST_COMPRESSION;
+            stamper.Writer.SetFullCompression();
 
-            var (jpegQuality, maxDimension) = GetImageSettings(level);
-            var processed = new HashSet<int>();
-            var total = reader.XrefSize;
+            var (jpegQuality, dpi, downscaleImages) = GetCompressionSettings(level);
+            var pageCount = reader.NumberOfPages;
 
-            for (var i = 0; i < total; i++)
+            for (var page = 1; page <= pageCount; page++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                if (reader.GetPdfObjectRelease(i) is PdfIndirectReference indirect)
-                    TryReplaceImageStream(reader, stamper, indirect, jpegQuality, maxDimension, processed);
+                var pageDict = reader.GetPageN(page);
+                var resources = pageDict.GetAsDict(PdfName.Resources);
+                if (resources is null)
+                    continue;
 
-                if (i % 16 == 0 || i == total - 1)
-                    progress?.Report((i + 1) * 100.0 / total);
+                var xObjects = resources.GetAsDict(PdfName.Xobject);
+                if (xObjects is null)
+                    continue;
+
+                foreach (var key in xObjects.Keys)
+                {
+                    if (xObjects.GetDirectObject(key) is not PrStream stream)
+                        continue;
+
+                    var subtype = stream.GetAsName(PdfName.Subtype);
+                    if (!PdfName.Image.Equals(subtype))
+                        continue;
+
+                    TryRecompressImageStream(stream, jpegQuality, dpi, downscaleImages);
+                }
+
+                progress?.Report(page * 100.0 / pageCount);
             }
 
             stamper.Close();
@@ -60,16 +132,13 @@ public sealed class CompressService : ICompressService
             reader.Close();
             reader = null;
 
-            if (File.Exists(outputPath))
-                File.Delete(outputPath);
-
-            File.Move(tempPath, outputPath);
             progress?.Report(100);
         }
         catch
         {
-            if (File.Exists(tempPath))
-                File.Delete(tempPath);
+            if (File.Exists(outputPath))
+                File.Delete(outputPath);
+
             throw;
         }
         finally
@@ -79,36 +148,51 @@ public sealed class CompressService : ICompressService
         }
     }
 
-    private static void TryReplaceImageStream(
-        PdfReader reader,
-        PdfStamper stamper,
-        PdfIndirectReference indirect,
-        long jpegQuality,
-        int maxDimension,
-        ISet<int> processed)
+    private static void TryRecompressImageStream(
+        PrStream stream,
+        int jpegQuality,
+        int dpi,
+        bool downscaleImages)
     {
-        if (!processed.Add(indirect.Number))
-            return;
-
         try
         {
-            var pdfObject = PdfReader.GetPdfObject(indirect);
-            if (pdfObject is not PrStream stream)
+            var imgBytes = PdfReader.GetStreamBytesRaw(stream);
+            if (imgBytes is null || imgBytes.Length == 0)
                 return;
 
-            var subtype = stream.GetAsName(PdfName.Subtype);
-            if (!PdfName.Image.Equals(subtype))
-                return;
+            using var inputStream = new MemoryStream(imgBytes);
+            using var image = DrawingImage.FromStream(inputStream);
 
-            var bytes = PdfReader.GetStreamBytes(stream);
-            using var inputStream = new MemoryStream(bytes);
-            using var drawingImage = DrawingImage.FromStream(inputStream);
-            using var resized = ResizeImage(drawingImage, maxDimension);
-            var jpegBytes = ImageToJpegBytes(resized, jpegQuality);
-            var replacement = PdfImage.GetInstance(jpegBytes);
+            var newWidth = image.Width;
+            var newHeight = image.Height;
 
-            PdfReader.KillIndirect(stream);
-            stamper.Writer.AddDirectImageSimple(replacement, indirect);
+            if (downscaleImages)
+            {
+                var scale = dpi / ReferenceDpi;
+                newWidth = Math.Max(1, (int)(image.Width * scale));
+                newHeight = Math.Max(1, (int)(image.Height * scale));
+            }
+
+            using var bitmap = new Bitmap(newWidth, newHeight);
+            using (var graphics = Graphics.FromImage(bitmap))
+            {
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.DrawImage(image, 0, 0, newWidth, newHeight);
+            }
+
+            using var outputStream = new MemoryStream();
+            var encoder = GetJpegEncoder();
+            using var encoderParams = new EncoderParameters(1);
+            encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, jpegQuality);
+            bitmap.Save(outputStream, encoder, encoderParams);
+
+            var compressed = outputStream.ToArray();
+            stream.SetData(compressed, false, PdfStream.BEST_COMPRESSION);
+            stream.Put(PdfName.Filter, PdfName.Dctdecode);
+            stream.Put(PdfName.Width, new PdfNumber(newWidth));
+            stream.Put(PdfName.Height, new PdfNumber(newHeight));
+            stream.Put(PdfName.Bitspercomponent, new PdfNumber(8));
+            stream.Put(PdfName.Colorspace, PdfName.Devicergb);
         }
         catch
         {
@@ -116,53 +200,17 @@ public sealed class CompressService : ICompressService
         }
     }
 
-    private static DrawingImage ResizeImage(DrawingImage source, int maxDimension)
-    {
-        var width = source.Width;
-        var height = source.Height;
-        var longest = Math.Max(width, height);
+    private static ImageCodecInfo GetJpegEncoder() =>
+        ImageCodecInfo.GetImageEncoders().First(e => e.MimeType == "image/jpeg");
 
-        if (longest <= maxDimension)
-            return (DrawingImage)source.Clone();
-
-        var scale = maxDimension / (double)longest;
-        var targetWidth = Math.Max(1, (int)(width * scale));
-        var targetHeight = Math.Max(1, (int)(height * scale));
-
-        var bitmap = new Bitmap(targetWidth, targetHeight);
-        using var graphics = Graphics.FromImage(bitmap);
-        graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-        graphics.DrawImage(source, 0, 0, targetWidth, targetHeight);
-        return bitmap;
-    }
-
-    private static byte[] ImageToJpegBytes(DrawingImage image, long quality)
-    {
-        using var stream = new MemoryStream();
-        var encoder = ImageCodecInfo.GetImageEncoders().First(c => c.FormatID == ImageFormat.Jpeg.Guid);
-        using var parameters = new EncoderParameters(1);
-        parameters.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-        image.Save(stream, encoder, parameters);
-        return stream.ToArray();
-    }
-
-    private static int GetStreamCompression(CompressionLevel level) => level switch
-    {
-        CompressionLevel.Level1 => PdfStream.NO_COMPRESSION,
-        CompressionLevel.Level2 => 3,
-        CompressionLevel.Level3 => 5,
-        CompressionLevel.Level4 => 7,
-        CompressionLevel.Level5 => PdfStream.BEST_COMPRESSION,
-        _ => 5
-    };
-
-    private static (long JpegQuality, int MaxDimension) GetImageSettings(CompressionLevel level) => level switch
-    {
-        CompressionLevel.Level1 => (85L, 2400),
-        CompressionLevel.Level2 => (70L, 1800),
-        CompressionLevel.Level3 => (55L, 1400),
-        CompressionLevel.Level4 => (40L, 1000),
-        CompressionLevel.Level5 => (25L, 800),
-        _ => (55L, 1400)
-    };
+    private static (int JpegQuality, int Dpi, bool DownscaleImages) GetCompressionSettings(CompressionLevel level) =>
+        level switch
+        {
+            CompressionLevel.Level1 => (15, 72, true),
+            CompressionLevel.Level2 => (35, 96, true),
+            CompressionLevel.Level3 => (55, 120, true),
+            CompressionLevel.Level4 => (75, 150, false),
+            CompressionLevel.Level5 => (92, 200, false),
+            _ => (55, 120, true)
+        };
 }

@@ -17,6 +17,12 @@ public sealed class PageService : IPageService
         return SavePages(path, pages);
     }
 
+    public int GetPageCount(string path)
+    {
+        using var source = OpenImport(path);
+        return source.PageCount;
+    }
+
     public string AddPage(string sourcePath, string insertPath, int insertAt)
     {
         using var source = OpenImport(sourcePath);
@@ -43,6 +49,21 @@ public sealed class PageService : IPageService
         var pages = Enumerable.Range(0, source.PageCount).Select(i => source.Pages[i]).ToList();
         pages.InsertRange(insertAt, indices.Select(i => source.Pages[i]));
         return SavePages(path, pages);
+    }
+
+    public string CopyPages(string sourcePath, List<int> pageIndices, string destPath, int insertAt)
+    {
+        if (string.Equals(sourcePath, destPath, StringComparison.OrdinalIgnoreCase))
+            return CopyPages(sourcePath, pageIndices, insertAt);
+
+        using var source = OpenImport(sourcePath);
+        using var dest = OpenImport(destPath);
+        var indices = pageIndices.Distinct().OrderBy(i => i).Where(i => i >= 0 && i < source.PageCount).ToList();
+        insertAt = Math.Clamp(insertAt, 0, dest.PageCount);
+
+        var pages = Enumerable.Range(0, dest.PageCount).Select(i => dest.Pages[i]).ToList();
+        pages.InsertRange(insertAt, indices.Select(i => source.Pages[i]));
+        return SavePages(destPath, pages);
     }
 
     public string MovePages(string path, List<int> pageIndices, int targetIndex)

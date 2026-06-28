@@ -34,6 +34,9 @@ public sealed class PdfViewerService : IPdfViewerService, IDisposable
         }
     }
 
+    public Task<PdfDocument?> OpenFileAsync(string path) =>
+        Task.Run(() => OpenFile(path));
+
     public int GetPageCount()
     {
         lock (_lock)
@@ -103,6 +106,26 @@ public sealed class PdfViewerService : IPdfViewerService, IDisposable
         }
     }
 
+    public void AddBookmark(string filePath, string title, int pageIndex)
+    {
+        lock (_lock)
+        {
+            var reopen = string.Equals(_currentPath, filePath, StringComparison.OrdinalIgnoreCase)
+                         && _document is not null;
+
+            if (reopen)
+                CloseFileInternal();
+
+            PdfBookmarkWriter.AddOutline(filePath, title, pageIndex);
+
+            if (reopen)
+            {
+                _document = PdfDocument.Load(filePath);
+                _currentPath = filePath;
+            }
+        }
+    }
+
     public List<SearchResult> SearchText(string query)
     {
         lock (_lock)
@@ -119,6 +142,11 @@ public sealed class PdfViewerService : IPdfViewerService, IDisposable
                 {
                     if (!pdfRect.IsValid) continue;
                     var rect = pdfRect.Bounds;
+                    if (double.IsNaN(rect.X) || double.IsNaN(rect.Y) ||
+                        double.IsNaN(rect.Width) || double.IsNaN(rect.Height) ||
+                        rect.Width <= 0 || rect.Height <= 0)
+                        continue;
+
                     results.Add(new SearchResult
                     {
                         PageIndex = match.Page,
@@ -136,6 +164,9 @@ public sealed class PdfViewerService : IPdfViewerService, IDisposable
         lock (_lock)
         {
             if (_document is null)
+                return System.Windows.Size.Empty;
+
+            if (pageIndex < 0 || pageIndex >= _document.PageCount)
                 return System.Windows.Size.Empty;
 
             var size = _document.PageSizes[pageIndex];

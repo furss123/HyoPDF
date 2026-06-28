@@ -13,11 +13,11 @@ public static class CompressionLevelExtensions
 {
     public static double EstimatedSizeRatio(this CompressionLevel level) => level switch
     {
-        CompressionLevel.Level1 => 0.90,
-        CompressionLevel.Level2 => 0.70,
+        CompressionLevel.Level1 => 0.15,
+        CompressionLevel.Level2 => 0.30,
         CompressionLevel.Level3 => 0.50,
-        CompressionLevel.Level4 => 0.35,
-        CompressionLevel.Level5 => 0.20,
+        CompressionLevel.Level4 => 0.70,
+        CompressionLevel.Level5 => 0.88,
         _ => 0.50
     };
 

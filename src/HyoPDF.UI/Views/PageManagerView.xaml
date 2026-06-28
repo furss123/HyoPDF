@@ -25,12 +25,12 @@
                     PreviewMouseLeftButtonUp="OnThumbnailMouseUp">
                 <Border.ContextMenu>
                     <ContextMenu DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
-                        <MenuItem Header="Delete" Command="{Binding Page.DeleteSelectedCommand}" />
-                        <MenuItem Header="Rotate 90°" Command="{Binding Page.RotateSelected90Command}" />
-                        <MenuItem Header="Rotate 180°" Command="{Binding Page.RotateSelected180Command}" />
-                        <MenuItem Header="Rotate 270°" Command="{Binding Page.RotateSelected270Command}" />
+                        <MenuItem Header="{Binding DeleteLabel}" Command="{Binding Page.DeleteSelectedCommand}" />
+                        <MenuItem Header="{Binding Rotate90Label}" Command="{Binding Page.RotateSelected90Command}" />
+                        <MenuItem Header="{Binding Rotate180Label}" Command="{Binding Page.RotateSelected180Command}" />
+                        <MenuItem Header="{Binding Rotate270Label}" Command="{Binding Page.RotateSelected270Command}" />
                         <Separator />
-                        <MenuItem Header="Extract..." Command="{Binding Page.ExtractSelectedCommand}" />
+                        <MenuItem Header="{Binding ExtractPagesLabel}" Command="{Binding Page.ExtractSelectedCommand}" />
                     </ContextMenu>
                 </Border.ContextMenu>
                 <Border.Style>
@@ -49,7 +49,7 @@
                            Height="110"
                            Stretch="Uniform"
                            RenderOptions.BitmapScalingMode="HighQuality" />
-                    <TextBlock Text="{Binding PageNumber, StringFormat=Page {0}}"
+                    <TextBlock Text="{Binding PageNumber}"
                                Style="{StaticResource TextSecondary}"
                                HorizontalAlignment="Center"
                                Margin="0,4,0,0" />
@@ -70,7 +70,7 @@
                 BorderThickness="0,0,0,1">
             <StackPanel>
                 <DockPanel Margin="0,0,0,8">
-                    <TextBlock Text="Page Manager"
+                    <TextBlock Text="{Binding DataContext.PageManagerLabel, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                Style="{StaticResource TextTitle}"
                                DockPanel.Dock="Left" />
                     <Button Content="×"
@@ -78,11 +78,11 @@
                             Style="{StaticResource ToolbarButton}"
                             Command="{Binding TogglePanelCommand}" />
                 </DockPanel>
-                <WrapPanel>
-                    <Button Style="{StaticResource ToolbarButton}" Content="Merge" Command="{Binding MergeCommand}" Margin="0,0,4,4" />
-                    <Button Style="{StaticResource ToolbarButton}" Content="Split" Command="{Binding SplitCommand}" Margin="0,0,4,4" />
-                    <Button Style="{StaticResource ToolbarButton}" Content="Extract" Command="{Binding ExtractSelectedCommand}" Margin="0,0,4,4" />
-                    <Button Style="{StaticResource ToolbarButton}" Content="Delete" Command="{Binding DeleteSelectedCommand}" Margin="0,0,4,4" />
+                <WrapPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                    <Button Style="{StaticResource ToolbarButton}" Content="{Binding MergeLabel}" Command="{Binding Page.MergeCommand}" Margin="0,0,4,4" />
+                    <Button Style="{StaticResource ToolbarButton}" Content="{Binding SplitLabel}" Command="{Binding Page.SplitCommand}" Margin="0,0,4,4" />
+                    <Button Style="{StaticResource ToolbarButton}" Content="{Binding ExtractLabel}" Command="{Binding Page.ExtractSelectedCommand}" Margin="0,0,4,4" />
+                    <Button Style="{StaticResource ToolbarButton}" Content="{Binding DeleteLabel}" Command="{Binding Page.DeleteSelectedCommand}" Margin="0,0,4,4" />
                 </WrapPanel>
             </StackPanel>
         </Border>

@@ -15,6 +15,7 @@ public partial class CompressViewModel : ObservableObject
     private readonly ICompressService _compressService;
     private readonly ILocalizationService _localization;
     private readonly IToastService _toastService;
+    private readonly TabsViewModel _documentTabs;
     private CancellationTokenSource? _cancellationTokenSource;
 
     [ObservableProperty]
@@ -27,10 +28,10 @@ public partial class CompressViewModel : ObservableObject
     private string? _outputPath;
 
     [ObservableProperty]
-    private string _originalSizeText = "-";
+    private string _originalSizeText = "—";
 
     [ObservableProperty]
-    private string _estimatedSizeText = "-";
+    private string _estimatedSizeText = "—";
 
     [ObservableProperty]
     private bool _isCompressing;
@@ -55,11 +56,13 @@ public partial class CompressViewModel : ObservableObject
     public CompressViewModel(
         ICompressService compressService,
         ILocalizationService localization,
-        IToastService toastService)
+        IToastService toastService,
+        TabsViewModel documentTabs)
     {
         _compressService = compressService;
         _localization = localization;
         _toastService = toastService;
+        _documentTabs = documentTabs;
         _localization.CultureChanged += (_, _) => RefreshLevelLabels();
     }
 
@@ -68,8 +71,8 @@ public partial class CompressViewModel : ObservableObject
         ErrorMessage = null;
         Progress = 0;
         IsCompressing = false;
-        InputPath = defaultInputPath;
-        OutputPath = BuildDefaultOutputPath(defaultInputPath);
+        InputPath = string.IsNullOrWhiteSpace(defaultInputPath) ? null : defaultInputPath;
+        OutputPath = BuildDefaultOutputPath(InputPath);
         UpdateSizeEstimates();
         SelectedLevel = CompressionLevel.Level3;
         SelectedLevelSlider = 3;
@@ -121,27 +124,47 @@ public partial class CompressViewModel : ObservableObject
         Progress = 0;
         _cancellationTokenSource = new CancellationTokenSource();
 
+        var inputPath = InputPath!;
+        var outputPath = OutputPath!;
+        var samePath = string.Equals(inputPath, outputPath, StringComparison.OrdinalIgnoreCase);
+        var wasOpen = _documentTabs.IsPathOpen(inputPath);
+
+        if (wasOpen)
+            _documentTabs.ReleaseFileHandle(inputPath);
+
         try
         {
             var progress = new Progress<double>(value => Progress = value);
             await Task.Run(() => _compressService.CompressPdf(
-                InputPath!,
-                OutputPath!,
+                inputPath,
+                outputPath,
                 SelectedLevel,
                 progress,
                 _cancellationTokenSource.Token));
+
+            if (wasOpen)
+                _documentTabs.ReloadFileIfTabExists(samePath ? outputPath : inputPath);
 
             _toastService.Show(_localization.GetString("CompressComplete"), ToastType.Success);
             CloseRequested?.Invoke(this, EventArgs.Empty);
         }
         catch (OperationCanceledException)
         {
+            if (wasOpen)
+                _documentTabs.ReloadFileIfTabExists(inputPath);
+
             ErrorMessage = _localization.GetString("CompressCancelled");
         }
         catch (Exception ex)
         {
-            ErrorMessage = ex.Message;
-            _toastService.Show(ex.Message, ToastType.Error);
+            if (wasOpen)
+                _documentTabs.ReloadFileIfTabExists(inputPath);
+
+            var message = string.Format(
+                _localization.GetString("CompressFailed"),
+                ex.Message);
+            ErrorMessage = message;
+            _toastService.Show(message, ToastType.Error);
         }
         finally
         {
@@ -170,7 +193,11 @@ public partial class CompressViewModel : ObservableObject
     private static string? BuildDefaultOutputPath(string? inputPath)
     {
         if (string.IsNullOrWhiteSpace(inputPath))
-            return null;
+        {
+            return Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+                "compressed.pdf");
+        }
 
         var directory = Path.GetDirectoryName(inputPath);
         var name = Path.GetFileNameWithoutExtension(inputPath);

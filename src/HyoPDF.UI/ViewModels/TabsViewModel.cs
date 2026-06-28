@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -15,13 +16,19 @@ public partial class TabsViewModel : ObservableObject
 
     public ObservableCollection<TabItemViewModel> Tabs { get; } = [];
 
+    public bool ShowTabStrip => Tabs.Count >= 2;
+
     public event EventHandler? ActiveTabChanged;
 
     public TabsViewModel(TabItemFactory factory)
     {
         _factory = factory;
+        Tabs.CollectionChanged += OnTabsCollectionChanged;
         EnsureWelcomeTab();
     }
+
+    private void OnTabsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+        OnPropertyChanged(nameof(ShowTabStrip));
 
     public void OpenNewTab(string path)
     {
@@ -45,6 +52,36 @@ public partial class TabsViewModel : ObservableObject
         SwitchTab(tab);
     }
 
+    public bool IsPathOpen(string path) =>
+        Tabs.Any(t =>
+            !string.IsNullOrEmpty(t.FilePath) &&
+            string.Equals(t.FilePath, path, StringComparison.OrdinalIgnoreCase));
+
+    public TabItemViewModel? FindTabByPath(string path) =>
+        Tabs.FirstOrDefault(t =>
+            !string.IsNullOrEmpty(t.FilePath) &&
+            string.Equals(t.FilePath, path, StringComparison.OrdinalIgnoreCase));
+
+    public void ReleaseFileHandle(string path) =>
+        FindTabByPath(path)?.Viewer.CloseDocument();
+
+    public void ReloadFileIfTabExists(string path)
+    {
+        var tab = FindTabByPath(path);
+        if (tab is not null && File.Exists(path))
+            tab.Viewer.LoadDocument(path);
+    }
+
+    public void CloseTabForPath(string path)
+    {
+        var tab = Tabs.FirstOrDefault(t =>
+            !string.IsNullOrEmpty(t.FilePath) &&
+            string.Equals(t.FilePath, path, StringComparison.OrdinalIgnoreCase));
+
+        if (tab is not null)
+            CloseTab(tab);
+    }
+
     [RelayCommand]
     public void CloseTab(TabItemViewModel? tab)
     {
@@ -53,7 +90,8 @@ public partial class TabsViewModel : ObservableObject
             return;
 
         tab.Viewer.CloseDocument();
-        tab.Page.OnDocumentClosed();
+        tab.Viewer.Dispose();
+        tab.Page.OnDocumentClosed(tab.FilePath);
         Tabs.Remove(tab);
 
         if (ActiveTab is null || !Tabs.Contains(ActiveTab))
@@ -114,6 +152,7 @@ public partial class TabsViewModel : ObservableObject
         var welcome = Tabs[0];
         Tabs.Clear();
         welcome.Viewer.CloseDocument();
+        welcome.Viewer.Dispose();
         welcome.Page.OnDocumentClosed();
     }
 }

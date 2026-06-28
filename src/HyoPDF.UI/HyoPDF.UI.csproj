@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="MaterialDesignThemes" Version="5.3.2" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -15,7 +16,20 @@
     <RootNamespace>HyoPDF.UI</RootNamespace>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <NeutralLanguage>ko-KR</NeutralLanguage>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="..\..\assets\icons\toolbar\*.png">
+      <Link>Assets\Icons\Toolbar\%(Filename)%(Extension)</Link>
+    </Resource>
+    <Resource Include="..\..\assets\icons\app-icon-512.png">
+      <Link>Assets\Icons\app-icon-512.png</Link>
+    </Resource>
+    <Resource Include="..\..\assets\icons\desk-illustration-1200.png">
+      <Link>Assets\Icons\desk-illustration-1200.png</Link>
+    </Resource>
+  </ItemGroup>
 
 </Project>

@@ -14,7 +14,9 @@ public sealed class LocalizationService : ILocalizationService
         _resourceManager = new ResourceManager(
             "HyoPDF.UI.Resources.Strings",
             typeof(LocalizationService).Assembly);
-        _currentCulture = new CultureInfo("ko");
+        _currentCulture = LocalizationCulture.ToCultureInfo("ko");
+        CultureInfo.CurrentUICulture = _currentCulture;
+        CultureInfo.CurrentCulture = _currentCulture;
     }
 
     public CultureInfo CurrentCulture => _currentCulture;
@@ -23,7 +25,7 @@ public sealed class LocalizationService : ILocalizationService
 
     public void SetCulture(string cultureName)
     {
-        _currentCulture = new CultureInfo(cultureName);
+        _currentCulture = LocalizationCulture.ToCultureInfo(cultureName);
         CultureInfo.CurrentUICulture = _currentCulture;
         CultureInfo.CurrentCulture = _currentCulture;
         CultureChanged?.Invoke(this, EventArgs.Empty);
