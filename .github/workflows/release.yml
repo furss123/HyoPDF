@@ -47,6 +47,9 @@ jobs:
         shell: pwsh
         run: ./build/scripts/Publish-App.ps1 -Runtime win-x64 -Version ${{ steps.version.outputs.version }}
 
+      - name: Install Python dependencies for assets
+        run: pip install pillow
+
       - name: Prepare installer assets
         shell: pwsh
         run: ./build/scripts/Prepare-Assets.ps1
