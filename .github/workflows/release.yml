@@ -55,7 +55,14 @@ jobs:
         run: ./build/scripts/Prepare-Assets.ps1
 
       - name: Install Inno Setup
-        run: choco install innosetup --version=6.2.2 -y
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            choco install innosetup -y
+          } else {
+            Write-Host "Inno Setup already installed at $iscc"
+          }
 
       - name: Build MSI (x64)
         shell: pwsh
