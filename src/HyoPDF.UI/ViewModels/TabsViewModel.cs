@@ -45,11 +45,20 @@ public partial class TabsViewModel : ObservableObject
             return;
         }
 
-        RemoveWelcomeTabIfNeeded();
+        var welcomeTab = Tabs.Count == 1 && ActiveTab?.FilePath is null ? ActiveTab : null;
 
         var tab = _factory.CreateForPath(path);
         Tabs.Add(tab);
         SwitchTab(tab);
+
+        if (welcomeTab is not null)
+        {
+            welcomeTab.Viewer.CloseDocument();
+            welcomeTab.Viewer.Dispose();
+            welcomeTab.Page.OnDocumentClosed();
+            Tabs.Remove(welcomeTab);
+        }
+
         tab.Viewer.LoadDocument(path);
     }
 
@@ -143,20 +152,5 @@ public partial class TabsViewModel : ObservableObject
         var tab = _factory.CreateWelcome();
         Tabs.Add(tab);
         ActiveTab = tab;
-    }
-
-    private void RemoveWelcomeTabIfNeeded()
-    {
-        if (Tabs.Count != 1 || ActiveTab?.FilePath is not null)
-            return;
-
-        var welcome = Tabs[0];
-        Tabs.Remove(welcome);
-        if (ReferenceEquals(ActiveTab, welcome))
-            ActiveTab = null;
-
-        welcome.Viewer.CloseDocument();
-        welcome.Viewer.Dispose();
-        welcome.Page.OnDocumentClosed();
     }
 }

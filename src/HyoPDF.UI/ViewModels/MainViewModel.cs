@@ -179,8 +179,12 @@ public partial class MainViewModel : ObservableObject
     public bool HasRecentFiles => RecentFiles.Count > 0;
 
     public TabItemViewModel? ActiveTab => DocumentTabs.ActiveTab;
-    public ViewerViewModel Viewer => DocumentTabs.ActiveTab!.Viewer;
-    public PageViewModel Page => DocumentTabs.ActiveTab!.Page;
+    public ViewerViewModel Viewer =>
+        DocumentTabs.ActiveTab?.Viewer
+        ?? throw new InvalidOperationException("No active tab is available.");
+    public PageViewModel Page =>
+        DocumentTabs.ActiveTab?.Page
+        ?? throw new InvalidOperationException("No active tab is available.");
     public bool HasOpenDocument =>
         ActiveTab is not null
         && Viewer.HasDocument

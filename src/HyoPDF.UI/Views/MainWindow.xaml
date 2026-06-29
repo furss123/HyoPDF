@@ -11,7 +11,7 @@
         Height="440"
         MinWidth="580"
         MinHeight="440"
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="Manual"
         WindowState="Normal"
         WindowStyle="None"
         AllowsTransparency="False"

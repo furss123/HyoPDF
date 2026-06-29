@@ -6,8 +6,10 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Threading;
 using HyoPDF.Core.Localization;
 using HyoPDF.Core.Settings;
+using HyoPDF.UI.Helpers;
 using HyoPDF.UI.Services;
 using HyoPDF.UI.ViewModels;
 using MaterialDesignThemes.Wpf;
@@ -17,8 +19,6 @@ namespace HyoPDF.UI.Views;
 
 public partial class MainWindow : Window
 {
-    private const double DefaultWidth = 580;
-    private const double DefaultHeight = 440;
     private const double MinRestoreWidth = 580;
     private const double MaxRestoreWidth = 1600;
     private const double MinRestoreHeight = 440;
@@ -54,14 +54,20 @@ public partial class MainWindow : Window
         WindowState = WindowState.Normal;
         if (settings.UserResized)
         {
-            Width = Math.Max(MinRestoreWidth, Math.Min(settings.LastWindowSize.Width, MaxRestoreWidth));
-            Height = Math.Max(MinRestoreHeight, Math.Min(settings.LastWindowSize.Height, MaxRestoreHeight));
+            var (width, height) = PrimaryMonitorPlacement.ClampSize(
+                settings.LastWindowSize.Width,
+                settings.LastWindowSize.Height);
+            Width = Math.Min(width, MaxRestoreWidth);
+            Height = Math.Min(height, MaxRestoreHeight);
         }
         else
         {
-            Width = DefaultWidth;
-            Height = DefaultHeight;
+            var (width, height) = PrimaryMonitorPlacement.GetDefaultSize();
+            Width = width;
+            Height = height;
         }
+
+        PrimaryMonitorPlacement.PlaceOnPrimaryMonitor(this);
 
         var toastHost = new ToastHost(toastService);
         Grid.SetRowSpan(toastHost, 4);
@@ -425,6 +431,23 @@ public partial class MainWindow : Window
     }
 
     public void OpenFileFromPath(string path) => _viewModel.OpenFileFromPath(path);
+
+    public void OpenFileWhenReady(string path)
+    {
+        if (IsLoaded)
+        {
+            OpenFileFromPath(path);
+            return;
+        }
+
+        RoutedEventHandler? handler = null;
+        handler = (_, _) =>
+        {
+            Loaded -= handler!;
+            OpenFileFromPath(path);
+        };
+        Loaded += handler;
+    }
 
     public void FocusViewerArea() => ViewerArea.Focus();
 

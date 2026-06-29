@@ -14,6 +14,7 @@ namespace HyoPDF.App;
 public partial class App : Application
 {
     private readonly IHost _host;
+    private SingleInstance? _singleInstance;
 
     public App()
     {
@@ -31,6 +32,14 @@ public partial class App : Application
 
     protected override async void OnStartup(StartupEventArgs e)
     {
+        _singleInstance = SingleInstance.Acquire();
+        if (!_singleInstance.IsFirstInstance)
+        {
+            _singleInstance.TryForwardArguments(e.Args);
+            Shutdown();
+            return;
+        }
+
         await _host.StartAsync();
 
         var settingsStore = _host.Services.GetRequiredService<ILocalSettingsStore>();
@@ -41,13 +50,13 @@ public partial class App : Application
         _host.Services.GetRequiredService<ThemeManager>();
 
         var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+        _singleInstance.StartListening(mainWindow.OpenFileWhenReady);
         mainWindow.Show();
 
-        if (e.Args is { Length: > 0 } args)
+        foreach (var path in e.Args.Where(SingleInstance.IsOpenablePath).Select(SingleInstance.NormalizePath))
         {
-            var path = args[0];
             if (File.Exists(path))
-                mainWindow.OpenFileFromPath(path);
+                mainWindow.OpenFileWhenReady(path);
         }
 
         base.OnStartup(e);
@@ -55,6 +64,7 @@ public partial class App : Application
 
     protected override async void OnExit(ExitEventArgs e)
     {
+        _singleInstance?.Dispose();
         await _host.StopAsync();
         _host.Dispose();
         base.OnExit(e);
