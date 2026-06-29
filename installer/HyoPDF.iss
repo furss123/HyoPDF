@@ -10,16 +10,16 @@ AppUpdatesURL=https://github.com/furss123/HyoPDF/releases
 DefaultDirName={autopf}\HyoT\HyoPDF
 DefaultGroupName=HyoT\HyoPDF
 AllowNoIcons=yes
-OutputDir=..\..\artifacts
+OutputDir=..\artifacts
 OutputBaseFilename=HyoPDF-{#AppVersion}-Setup
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
 WizardSizePercent=120
 
-SetupIconFile=..\..\assets\installer\setup-icon.ico
-WizardImageFile=..\..\assets\installer\wizard-image.bmp
-WizardSmallImageFile=..\..\assets\installer\wizard-banner.bmp
+SetupIconFile=..\assets\installer\setup-icon.ico
+WizardImageFile=..\assets\installer\wizard-image.bmp
+WizardSmallImageFile=..\assets\installer\wizard-banner.bmp
 
 WizardImageStretch=no
 WizardImageBackColor=$0A0A0A
@@ -63,11 +63,11 @@ Name: "fileassoc"; \
   Flags: unchecked
 
 [Files]
-Source: "..\..\artifacts\publish\win-x64\*"; \
+Source: "..\artifacts\publish\win-x64\*"; \
   DestDir: "{app}"; \
   Flags: ignoreversion recursesubdirs createallsubdirs
 
-Source: "..\..\assets\icons\app.ico"; \
+Source: "..\assets\icons\app.ico"; \
   DestDir: "{app}"; \
   Flags: ignoreversion
 
