@@ -15,6 +15,10 @@ $files = @(
     "HyoPDF-$Version-$Arch.msi"
 )
 
+if ($Arch -eq 'x64') {
+    $files += "HyoPDF-$Version-Setup.exe"
+}
+
 foreach ($file in $files) {
     $path = Join-Path $artifactsDir $file
     if (-not (Test-Path $path)) {

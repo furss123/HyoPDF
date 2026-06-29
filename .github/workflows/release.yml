@@ -47,9 +47,20 @@ jobs:
         shell: pwsh
         run: ./build/scripts/Publish-App.ps1 -Runtime win-x64 -Version ${{ steps.version.outputs.version }}
 
+      - name: Prepare installer assets
+        shell: pwsh
+        run: ./build/scripts/Prepare-Assets.ps1
+
+      - name: Install Inno Setup
+        run: choco install innosetup --version=6.2.2 -y
+
       - name: Build MSI (x64)
         shell: pwsh
         run: ./build/scripts/Build-Installer.ps1 -Arch x64 -Version ${{ steps.version.outputs.version }}
+
+      - name: Build Inno Setup installer (x64)
+        shell: pwsh
+        run: ./build/scripts/Build-InnoSetup.ps1 -Version ${{ steps.version.outputs.version }}
 
       - name: Generate SHA256
         shell: pwsh
@@ -62,8 +73,10 @@ jobs:
           path: |
             artifacts/HyoPDF-${{ steps.version.outputs.version }}-x64.exe
             artifacts/HyoPDF-${{ steps.version.outputs.version }}-x64.msi
+            artifacts/HyoPDF-${{ steps.version.outputs.version }}-Setup.exe
             artifacts/HyoPDF-${{ steps.version.outputs.version }}-x64.exe.sha256
             artifacts/HyoPDF-${{ steps.version.outputs.version }}-x64.msi.sha256
+            artifacts/HyoPDF-${{ steps.version.outputs.version }}-Setup.exe.sha256
           retention-days: 0
 
   build-arm64:
@@ -151,8 +164,10 @@ jobs:
           files: |
             artifacts/HyoPDF-${{ steps.version.outputs.version }}-x64.exe
             artifacts/HyoPDF-${{ steps.version.outputs.version }}-x64.msi
+            artifacts/HyoPDF-${{ steps.version.outputs.version }}-Setup.exe
             artifacts/HyoPDF-${{ steps.version.outputs.version }}-x64.exe.sha256
             artifacts/HyoPDF-${{ steps.version.outputs.version }}-x64.msi.sha256
+            artifacts/HyoPDF-${{ steps.version.outputs.version }}-Setup.exe.sha256
             artifacts/HyoPDF-${{ steps.version.outputs.version }}-arm64.exe
             artifacts/HyoPDF-${{ steps.version.outputs.version }}-arm64.msi
             artifacts/HyoPDF-${{ steps.version.outputs.version }}-arm64.exe.sha256
@@ -191,6 +206,7 @@ jobs:
           $assets = @(
             (New-Asset 'portable' 'x64' "HyoPDF-$version-x64.exe"),
             (New-Asset 'installer' 'x64' "HyoPDF-$version-x64.msi"),
+            (New-Asset 'installer' 'x64' "HyoPDF-$version-Setup.exe"),
             (New-Asset 'portable' 'arm64' "HyoPDF-$version-arm64.exe"),
             (New-Asset 'installer' 'arm64' "HyoPDF-$version-arm64.msi")
           )
