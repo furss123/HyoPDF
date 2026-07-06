@@ -13,6 +13,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 using CommunityToolkit.Mvvm.Input;
 
+using HyoPDF.Core.Diagnostics;
+
 using HyoPDF.Core.Localization;
 
 using HyoPDF.Core.Models;
@@ -376,6 +378,7 @@ public partial class ViewerViewModel : ObservableObject, IDisposable
         {
 
             System.Diagnostics.Debug.WriteLine($"[Viewer] LoadDocument failed: {ex}");
+            FileLog.Write($"[Viewer] LoadDocument failed: {path}", ex);
 
             await Application.Current.Dispatcher.InvokeAsync(() =>
 
@@ -701,6 +704,7 @@ public partial class ViewerViewModel : ObservableObject, IDisposable
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Add bookmark failed: {ex}");
+            FileLog.Write($"[Viewer] Add bookmark failed: {path}", ex);
             _toastService.Show("북마크 추가에 실패했습니다", ToastType.Error);
         }
         finally

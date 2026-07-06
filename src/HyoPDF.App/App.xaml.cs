@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
+using HyoPDF.Core.Diagnostics;
 using HyoPDF.Core.Localization;
 using HyoPDF.Core.Settings;
 using HyoPDF.UI.Services;
@@ -19,6 +20,8 @@ public partial class App : Application
     public App()
     {
         DispatcherUnhandledException += OnDispatcherUnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+        TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices(services => services.AddHyoPdfServices())
             .Build();
@@ -27,7 +30,19 @@ public partial class App : Application
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
         Debug.WriteLine($"[Global] {e.Exception}");
+        FileLog.Write("[Global] Dispatcher unhandled exception", e.Exception);
         e.Handled = true;
+    }
+
+    private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        FileLog.Write("[Global] AppDomain unhandled exception", e.ExceptionObject as Exception);
+    }
+
+    private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+    {
+        FileLog.Write("[Global] Unobserved task exception", e.Exception);
+        e.SetObserved();
     }
 
     protected override async void OnStartup(StartupEventArgs e)
