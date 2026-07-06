@@ -205,7 +205,23 @@ public partial class PageViewModel : ObservableObject
 
         var undoSnapshot = PageFileHelper.CreateSnapshot(path);
         _pdfViewer.CloseFile();
-        operation();
+
+        try
+        {
+            operation();
+        }
+        catch (Exception ex)
+        {
+            // Recover the viewer instead of leaving it on a closed document:
+            // _pdfViewer.CloseFile() above already ran, so a failure here (locked
+            // file, disk full, etc.) would otherwise strand the UI on a document
+            // whose underlying handle is gone, with no visible error.
+            Debug.WriteLine($"{description} failed: {ex}");
+            _toastService.Show(_localization.GetString("PageOperationFailed"), ToastType.Error);
+            ReloadDocument(path);
+            return;
+        }
+
         var redoSnapshot = PageFileHelper.CreateSnapshot(path);
 
         _undoStack.Push(new PageSnapshotCommand(description, path, undoSnapshot, redoSnapshot, () => ReloadDocument(path)));

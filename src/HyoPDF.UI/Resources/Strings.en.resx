@@ -415,6 +415,9 @@
   <data name="AllPagesDeleted" xml:space="preserve">
     <value>All pages have been deleted</value>
   </data>
+  <data name="PageOperationFailed" xml:space="preserve">
+    <value>The operation failed. The file may be in use by another program or inaccessible.</value>
+  </data>
   <data name="CopyPagesComplete" xml:space="preserve">
     <value>Pages copied</value>
   </data>

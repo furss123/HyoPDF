@@ -1,5 +1,6 @@
 using System.IO;
 using System.util;
+using HyoPDF.Core.PageOperations;
 using iTextSharp.text.pdf;
 
 namespace HyoPDF.Core.Services;
@@ -34,6 +35,18 @@ internal static class PdfBookmarkWriter
         stamper.Close();
         reader.Close();
 
-        File.WriteAllBytes(filePath, output.ToArray());
+        // Write to a temp file first and swap it in atomically - writing
+        // straight to filePath would leave a truncated/corrupted PDF behind if
+        // the process is interrupted mid-write.
+        var tempPath = PageFileHelper.CreateTempOutputPath();
+        File.WriteAllBytes(tempPath, output.ToArray());
+        try
+        {
+            PageFileHelper.ReplaceOriginal(filePath, tempPath);
+        }
+        finally
+        {
+            File.Delete(tempPath);
+        }
     }
 }

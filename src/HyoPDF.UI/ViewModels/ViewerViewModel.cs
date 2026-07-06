@@ -1700,6 +1700,8 @@ public partial class ViewerViewModel : ObservableObject, IDisposable
 
         _thumbnailCancellation?.Cancel();
 
+        _thumbnailCancellation?.Dispose();
+
         _thumbnailCancellation = new CancellationTokenSource();
 
     }

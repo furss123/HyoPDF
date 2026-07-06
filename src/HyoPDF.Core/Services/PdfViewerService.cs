@@ -116,12 +116,21 @@ public sealed class PdfViewerService : IPdfViewerService, IDisposable
             if (reopen)
                 CloseFileInternal();
 
-            PdfBookmarkWriter.AddOutline(filePath, title, pageIndex);
-
-            if (reopen)
+            try
             {
-                _document = PdfDocument.Load(filePath);
-                _currentPath = filePath;
+                PdfBookmarkWriter.AddOutline(filePath, title, pageIndex);
+            }
+            finally
+            {
+                // Reopen even if AddOutline threw - otherwise a failed bookmark
+                // write leaves _document null permanently and every render call
+                // fails with "No PDF document is open" until the user manually
+                // reopens the file.
+                if (reopen)
+                {
+                    _document = PdfDocument.Load(filePath);
+                    _currentPath = filePath;
+                }
             }
         }
     }

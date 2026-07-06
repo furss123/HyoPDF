@@ -262,39 +262,7 @@ public partial class ViewerView : UserControl
 
         var center = scrollViewer.VerticalOffset + scrollViewer.ViewportHeight / 2;
 
-        var bestIndex = 0;
-
-        var bestDistance = double.MaxValue;
-
-
-
-        for (var i = 0; i < PagesList.Items.Count; i++)
-
-        {
-
-            if (PagesList.ItemContainerGenerator.ContainerFromIndex(i) is not FrameworkElement element)
-
-                continue;
-
-
-
-            var top = element.TranslatePoint(new Point(0, 0), scrollViewer).Y + scrollViewer.VerticalOffset;
-
-            var pageCenter = top + element.ActualHeight / 2;
-
-            var distance = Math.Abs(pageCenter - center);
-
-            if (distance < bestDistance)
-
-            {
-
-                bestDistance = distance;
-
-                bestIndex = i;
-
-            }
-
-        }
+        var bestIndex = FindClosestPageIndex(scrollViewer, center);
 
 
 
@@ -444,66 +412,107 @@ public partial class ViewerView : UserControl
 
 
 
-    private (int first, int last) GetVisiblePageRange(ScrollViewer scrollViewer)
+    // Scroll events fire many times per second while dragging/wheeling, and the
+    // realized container range (ListBox virtualization is on) rarely moves far
+    // between ticks. Scanning the full document on every tick made scrolling
+    // large PDFs O(pageCount) per event; scan a bounded window around the
+    // current page first (the common case) and only fall back to a full scan
+    // for big jumps (scrollbar-track click, Home/End) where the window misses
+    // every realized container.
+    private const int VisibleScanWindowRadius = 60;
 
+    private int FindClosestPageIndex(ScrollViewer scrollViewer, double center)
     {
+        var totalCount = PagesList.Items.Count;
+        if (totalCount == 0 || _viewer is null)
+            return 0;
 
-        var top = scrollViewer.VerticalOffset;
+        var seed = Math.Clamp(_viewer.CurrentPageIndex, 0, totalCount - 1);
+        var windowStart = Math.Max(0, seed - VisibleScanWindowRadius);
+        var windowEnd = Math.Min(totalCount - 1, seed + VisibleScanWindowRadius);
 
-        var bottom = top + scrollViewer.ViewportHeight;
+        var windowed = ScanClosestPage(scrollViewer, center, windowStart, windowEnd);
+        if (windowed.HasValue)
+            return windowed.Value;
 
-        var first = 0;
+        var fullScan = ScanClosestPage(scrollViewer, center, 0, totalCount - 1);
+        return fullScan ?? seed;
+    }
 
-        var last = 0;
+    private int? ScanClosestPage(ScrollViewer scrollViewer, double center, int start, int end)
+    {
+        int? bestIndex = null;
+        var bestDistance = double.MaxValue;
 
-        var foundFirst = false;
-
-
-
-        for (var i = 0; i < PagesList.Items.Count; i++)
-
+        for (var i = start; i <= end; i++)
         {
-
             if (PagesList.ItemContainerGenerator.ContainerFromIndex(i) is not FrameworkElement element)
-
                 continue;
 
-
-
-            var itemTop = element.TranslatePoint(new Point(0, 0), scrollViewer).Y;
-
-            var itemBottom = itemTop + element.ActualHeight;
-
-
-
-            if (!foundFirst && itemBottom >= top)
-
+            var top = element.TranslatePoint(new Point(0, 0), scrollViewer).Y + scrollViewer.VerticalOffset;
+            var pageCenter = top + element.ActualHeight / 2;
+            var distance = Math.Abs(pageCenter - center);
+            if (distance < bestDistance)
             {
-
-                first = i;
-
-                foundFirst = true;
-
+                bestDistance = distance;
+                bestIndex = i;
             }
-
-
-
-            if (itemTop <= bottom)
-
-                last = i;
-
         }
 
+        return bestIndex;
+    }
 
+    private (int first, int last) GetVisiblePageRange(ScrollViewer scrollViewer)
+    {
+        var totalCount = PagesList.Items.Count;
+        if (totalCount == 0)
+            return (0, 0);
+
+        var seed = Math.Clamp(_viewer?.CurrentPageIndex ?? 0, 0, totalCount - 1);
+        var windowStart = Math.Max(0, seed - VisibleScanWindowRadius);
+        var windowEnd = Math.Min(totalCount - 1, seed + VisibleScanWindowRadius);
+
+        return ScanVisiblePageRange(scrollViewer, windowStart, windowEnd)
+            ?? ScanVisiblePageRange(scrollViewer, 0, totalCount - 1)
+            ?? (0, Math.Max(0, totalCount - 1));
+    }
+
+    private (int first, int last)? ScanVisiblePageRange(ScrollViewer scrollViewer, int start, int end)
+    {
+        var top = scrollViewer.VerticalOffset;
+        var bottom = top + scrollViewer.ViewportHeight;
+        var first = 0;
+        var last = 0;
+        var foundAny = false;
+        var foundFirst = false;
+
+        for (var i = start; i <= end; i++)
+        {
+            if (PagesList.ItemContainerGenerator.ContainerFromIndex(i) is not FrameworkElement element)
+                continue;
+
+            var itemTop = element.TranslatePoint(new Point(0, 0), scrollViewer).Y;
+            var itemBottom = itemTop + element.ActualHeight;
+
+            if (!foundFirst && itemBottom >= top)
+            {
+                first = i;
+                foundFirst = true;
+            }
+
+            if (itemTop <= bottom)
+                last = i;
+
+            foundAny = true;
+        }
+
+        if (!foundAny)
+            return null;
 
         if (!foundFirst)
-
-            last = Math.Max(0, PagesList.Items.Count - 1);
-
-
+            last = end;
 
         return (first, last);
-
     }
 
 

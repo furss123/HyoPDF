@@ -1,6 +1,5 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -55,51 +54,22 @@ public partial class SidebarView : UserControl
         _viewer = viewer;
         _viewer.PropertyChanged += OnViewerPropertyChanged;
         _viewer.Pages.CollectionChanged += OnThumbnailPagesChanged;
-
-        if (_viewer.HasDocument)
-            ScheduleDebugThumbnails();
     }
 
     private void OnViewerPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(ViewerViewModel.HasDocument) or nameof(ViewerViewModel.PageCount))
-        {
-            if (e.PropertyName == nameof(ViewerViewModel.HasDocument) && _viewer is { HasDocument: false })
-                _lastSelectedIndex = -1;
-
-            if (e.PropertyName == nameof(ViewerViewModel.HasDocument))
-                ScheduleDebugThumbnails();
-        }
+        if (e.PropertyName == nameof(ViewerViewModel.HasDocument) && _viewer is { HasDocument: false })
+            _lastSelectedIndex = -1;
     }
 
-    private void OnThumbnailPagesChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
-        ScheduleDebugThumbnails();
+    private void OnThumbnailPagesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+    }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         if (ViewModel is not null)
             HookViewer(ViewModel.Viewer);
-
-        ScheduleDebugThumbnails();
-    }
-
-    private void ScheduleDebugThumbnails() => _ = RunDebugThumbnailsAsync();
-
-    private async Task RunDebugThumbnailsAsync()
-    {
-        await Task.Delay(2000);
-        await Dispatcher.InvokeAsync(DebugThumbnails);
-    }
-
-    private void DebugThumbnails()
-    {
-        Debug.WriteLine($"Pages in VM: {ViewModel?.Viewer.Pages.Count ?? 0}");
-        Debug.WriteLine($"ItemsControl items: {ThumbnailItemsControl.Items.Count}");
-        Debug.WriteLine($"ItemsControl ActualHeight: {ThumbnailItemsControl.ActualHeight}");
-        Debug.WriteLine($"ScrollViewer ActualHeight: {ThumbnailScrollViewer.ActualHeight}");
-        Debug.WriteLine($"ScrollViewer ExtentHeight: {ThumbnailScrollViewer.ExtentHeight}");
-        Debug.WriteLine($"ScrollViewer ViewportHeight: {ThumbnailScrollViewer.ViewportHeight}");
-        Debug.WriteLine($"Thumbnails loaded: {ViewModel?.Viewer.Pages.Count(p => p.Thumbnail is not null) ?? 0}");
     }
 
     private void OnThumbnailScrollChanged(object sender, ScrollChangedEventArgs e) =>
