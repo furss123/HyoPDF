@@ -1,4 +1,8 @@
-#define AppVersion "1.0.4"
+; AppVersion is injected by build/scripts/Build-InnoSetup.ps1 via /DAppVersion=<ver>.
+; The #ifndef guard lets that command-line value win; the fallback is for local builds.
+#ifndef AppVersion
+  #define AppVersion "1.1.0"
+#endif
 
 [Setup]
 AppName=HyoPDF
@@ -22,7 +26,7 @@ WizardImageFile=..\assets\installer\wizard-image.bmp
 WizardSmallImageFile=..\assets\installer\wizard-banner.bmp
 
 WizardImageStretch=no
-WizardImageBackColor=$0A0A0A
+WizardImageBackColor=$0C0907
 
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
