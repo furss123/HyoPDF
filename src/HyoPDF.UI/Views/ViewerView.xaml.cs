@@ -479,8 +479,8 @@ public partial class ViewerView : UserControl
 
     private (int first, int last)? ScanVisiblePageRange(ScrollViewer scrollViewer, int start, int end)
     {
-        var top = scrollViewer.VerticalOffset;
-        var bottom = top + scrollViewer.ViewportHeight;
+        const double top = 0;
+        var bottom = scrollViewer.ViewportHeight;
         var first = 0;
         var last = 0;
         var foundAny = false;

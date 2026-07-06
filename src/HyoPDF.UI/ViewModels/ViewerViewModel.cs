@@ -257,7 +257,7 @@ public partial class ViewerViewModel : ObservableObject, IDisposable
 
     {
 
-        CancelRenderTasks();
+        CancelRenderTasks(resetThumbnailToken: false);
 
         ClearRenderCache();
 
@@ -474,8 +474,6 @@ public partial class ViewerViewModel : ObservableObject, IDisposable
         if (_pdfViewer is IDisposable disposable)
 
             disposable.Dispose();
-
-        _thumbnailSemaphore.Dispose();
 
     }
 
@@ -1694,27 +1692,26 @@ public partial class ViewerViewModel : ObservableObject, IDisposable
 
 
 
-    private void CancelThumbnailTasks()
+    private void CancelThumbnailTasks(bool reset = true)
 
     {
 
         _thumbnailCancellation?.Cancel();
 
-        _thumbnailCancellation?.Dispose();
-
-        _thumbnailCancellation = new CancellationTokenSource();
+        if (reset)
+            _thumbnailCancellation = new CancellationTokenSource();
 
     }
 
 
 
-    private void CancelRenderTasks()
+    private void CancelRenderTasks(bool resetThumbnailToken = true)
 
     {
 
         CancelPageRenderTasks();
 
-        CancelThumbnailTasks();
+        CancelThumbnailTasks(resetThumbnailToken);
 
     }
 

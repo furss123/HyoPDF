@@ -1,8 +1,8 @@
 <Project>
   <PropertyGroup>
-    <HyoPDFVersion Condition="'$(HyoPDFVersion)' == ''">1.1.2</HyoPDFVersion>
+    <HyoPDFVersion Condition="'$(HyoPDFVersion)' == ''">1.1.3</HyoPDFVersion>
     <HyoPDFVersionBase Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(HyoPDFVersion)', '^\d+\.\d+\.\d+'))">$([System.Text.RegularExpressions.Regex]::Match('$(HyoPDFVersion)', '^(\d+\.\d+\.\d+)').Groups[1].Value)</HyoPDFVersionBase>
-    <HyoPDFVersionBase Condition="'$(HyoPDFVersionBase)' == ''">1.1.2</HyoPDFVersionBase>
+    <HyoPDFVersionBase Condition="'$(HyoPDFVersionBase)' == ''">1.1.3</HyoPDFVersionBase>
     <Version>$(HyoPDFVersion)</Version>
     <AssemblyVersion>$(HyoPDFVersionBase).0</AssemblyVersion>
     <FileVersion>$(HyoPDFVersionBase).0</FileVersion>
