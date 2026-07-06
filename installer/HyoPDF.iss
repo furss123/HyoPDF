@@ -1,7 +1,7 @@
 ; AppVersion is injected by build/scripts/Build-InnoSetup.ps1 via /DAppVersion=<ver>.
 ; The #ifndef guard lets that command-line value win; the fallback is for local builds.
 #ifndef AppVersion
-  #define AppVersion "1.1.1"
+  #define AppVersion "1.1.2"
 #endif
 
 [Setup]
