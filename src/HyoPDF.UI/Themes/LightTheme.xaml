@@ -2,8 +2,11 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- Design tokens -->
-    <Color x:Key="AccentColor">#0078D4</Color>
+    <Color x:Key="AccentColor">#4A9FE0</Color>
+    <Color x:Key="AccentHoverColor">#2B7CC7</Color>
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHoverColor}" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="#2A9B8A" />
     <SolidColorBrush x:Key="ErrorBrush" Color="#FFEBEE" />
     <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource BgElevatedColor}" />
 
@@ -17,10 +20,10 @@
     <Color x:Key="TitleBarBgColor">#E8E8E8</Color>
     <Color x:Key="SidebarBgColor">#F0F0F0</Color>
     <Color x:Key="ViewerBgColor">#E8E8E8</Color>
-    <Color x:Key="BgBaseColor">#F3F3F3</Color>
+    <Color x:Key="BgBaseColor">#F6F8FC</Color>
     <Color x:Key="BgSurfaceColor">#FFFFFF</Color>
-    <Color x:Key="BgElevatedColor">#F9F9F9</Color>
-    <Color x:Key="BorderColor">#E5E5E5</Color>
+    <Color x:Key="BgElevatedColor">#F9FBFE</Color>
+    <Color x:Key="BorderColor">#DCE4EF</Color>
     <Color x:Key="TextPrimaryColor">#1A1A1A</Color>
     <Color x:Key="TextSecondaryColor">#5A5A5A</Color>
     <Color x:Key="EmptyStateIconColor">#808080</Color>
@@ -31,7 +34,7 @@
     <SolidColorBrush x:Key="TitleBarBgBrush" Color="{StaticResource TitleBarBgColor}" />
     <SolidColorBrush x:Key="SidebarBgBrush" Color="{StaticResource SidebarBgColor}" />
     <SolidColorBrush x:Key="ViewerBgBrush" Color="{StaticResource ViewerBgColor}" />
-    <SolidColorBrush x:Key="AccentTintBrush" Color="#330078D4" />
+    <SolidColorBrush x:Key="AccentTintBrush" Color="#334A9FE0" />
     <SolidColorBrush x:Key="BgBaseBrush" Color="{StaticResource BgBaseColor}" />
     <SolidColorBrush x:Key="BgSurfaceBrush" Color="{StaticResource BgSurfaceColor}" />
     <SolidColorBrush x:Key="BgElevatedBrush" Color="{StaticResource BgElevatedColor}" />

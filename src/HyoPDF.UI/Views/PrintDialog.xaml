@@ -50,7 +50,7 @@
                     <Setter Property="Foreground" Value="#1A1A1A" />
                 </MultiDataTrigger>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#0078D4" />
+                    <Setter Property="Background" Value="#4A9FE0" />
                     <Setter Property="Foreground" Value="#FFFFFF" />
                 </Trigger>
             </Style.Triggers>
@@ -333,7 +333,7 @@
                     <Button Content="인쇄 시작"
                             Width="100"
                             Height="36"
-                            Background="#0078D4"
+                            Background="#4A9FE0"
                             Foreground="White"
                             BorderThickness="0"
                             Command="{Binding PrintCommand}"

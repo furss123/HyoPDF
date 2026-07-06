@@ -22,6 +22,27 @@ public partial class ToolbarView : UserControl
 
     public void FocusSearch()
     {
+        if (!SearchBox.IsEnabled)
+            return;
+
+        SearchBox.Focus();
+        SearchBox.SelectAll();
+    }
+
+    private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            e.Handled = true;
+            GetActiveViewer()?.SearchCommand.Execute(null);
+        }
+        else if (e.Key == Key.Escape)
+        {
+            e.Handled = true;
+            if (GetActiveViewer() is { } viewer)
+                viewer.SearchQuery = string.Empty;
+            Dispatcher.BeginInvoke(FocusViewerDeferred, DispatcherPriority.Input);
+        }
     }
 
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

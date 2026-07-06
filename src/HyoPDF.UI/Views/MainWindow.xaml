@@ -117,13 +117,13 @@
                         <TextBlock Text="PDF 파일을 열어 시작하세요"
                                    FontFamily="{StaticResource FontFamilyPrimary}"
                                    FontSize="16"
-                                   Foreground="#F0F0F0"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
                                    HorizontalAlignment="Center"
                                    Margin="0,0,0,4" />
                         <TextBlock Text="파일을 드래그하거나 열기 버튼을 클릭하세요"
                                    FontFamily="{StaticResource FontFamilyPrimary}"
                                    FontSize="13"
-                                   Foreground="#A0A0A0"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"
                                    HorizontalAlignment="Center"
                                    TextAlignment="Center"
                                    Margin="0,0,0,24" />

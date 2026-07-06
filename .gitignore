@@ -22,3 +22,10 @@ packages/
 
 ## Tools
 tools/
+
+## Python
+__pycache__/
+*.pyc
+
+## Dev-only asset proofs
+assets/icons/_icon-proof.png

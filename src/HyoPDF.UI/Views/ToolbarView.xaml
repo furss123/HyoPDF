@@ -303,6 +303,43 @@
 
             <Separator Style="{StaticResource ToolbarSeparator}" />
 
+            <!-- 검색 -->
+            <Grid VerticalAlignment="Center" Margin="2,0,4,0">
+                <TextBox x:Name="SearchBox"
+                         Style="{StaticResource ToolbarSearchTextBox}"
+                         IsEnabled="{Binding HasOpenDocument}"
+                         ToolTip="{Binding SearchLabel}"
+                         Text="{Binding Viewer.SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         PreviewKeyDown="SearchBox_PreviewKeyDown" />
+                <materialDesign:PackIcon Kind="Magnify"
+                                         Width="16" Height="16"
+                                         Margin="8,0,0,0"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Left"
+                                         IsHitTestVisible="False"
+                                         Foreground="{DynamicResource TextSecondaryBrush}" />
+                <TextBlock Text="{Binding SearchPlaceholderLabel}"
+                           IsHitTestVisible="False"
+                           Margin="30,0,0,0"
+                           VerticalAlignment="Center"
+                           FontFamily="{StaticResource FontFamilyPrimary}"
+                           FontSize="13"
+                           Foreground="{DynamicResource TextSecondaryBrush}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+
+            <Separator Style="{StaticResource ToolbarSeparator}" />
+
             <!-- 병합 -->
             <Button Style="{StaticResource ToolbarIconButton}"
                     Command="{Binding Page.MergeCommand}"

@@ -1293,7 +1293,11 @@ public partial class ViewerViewModel : ObservableObject, IDisposable
 
 
 
-        for (var i = 0; i < count; i++)
+        // Render outward from the current page so the sidebar populates where
+        // the user is looking first, instead of always starting at page 0.
+        var pivot = Math.Clamp(CurrentPageIndex, 0, Math.Max(0, count - 1));
+
+        foreach (var i in EnumerateOutward(pivot, count))
 
         {
 
@@ -1392,6 +1396,23 @@ public partial class ViewerViewModel : ObservableObject, IDisposable
     }
 
 
+
+    private static IEnumerable<int> EnumerateOutward(int pivot, int count)
+    {
+        if (pivot >= 0 && pivot < count)
+            yield return pivot;
+
+        for (var offset = 1; offset < count; offset++)
+        {
+            var forward = pivot + offset;
+            if (forward < count)
+                yield return forward;
+
+            var backward = pivot - offset;
+            if (backward >= 0)
+                yield return backward;
+        }
+    }
 
     private async Task LoadThumbnailAtIndexAsync(int index, CancellationToken token)
 

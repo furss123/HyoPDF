@@ -27,7 +27,7 @@
                     <Setter Property="Background" Value="#2A2A2A" />
                 </Trigger>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#0078D4" />
+                    <Setter Property="Background" Value="#4A9FE0" />
                     <Setter Property="Foreground" Value="#FFFFFF" />
                 </Trigger>
             </Style.Triggers>
