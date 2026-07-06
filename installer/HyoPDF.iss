@@ -1,7 +1,7 @@
 ; AppVersion is injected by build/scripts/Build-InnoSetup.ps1 via /DAppVersion=<ver>.
 ; The #ifndef guard lets that command-line value win; the fallback is for local builds.
 #ifndef AppVersion
-  #define AppVersion "1.1.0"
+  #define AppVersion "1.1.1"
 #endif
 
 [Setup]
@@ -81,7 +81,7 @@ Name: "{group}\HyoPDF"; \
   IconFilename: "{app}\app.ico"
 Name: "{group}\{cm:UninstallProgram,HyoPDF}"; \
   Filename: "{uninstallexe}"
-Name: "{commondesktop}\HyoPDF"; \
+Name: "{autodesktop}\HyoPDF"; \
   Filename: "{app}\HyoPDF.exe"; \
   IconFilename: "{app}\app.ico"; \
   Tasks: desktopicon
