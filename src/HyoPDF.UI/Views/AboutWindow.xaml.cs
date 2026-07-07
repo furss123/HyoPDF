@@ -27,11 +27,11 @@ public partial class AboutWindow : Window
 
 public sealed class AboutViewModel
 {
-    public string VersionText { get; }
+    public string FooterText { get; }
 
     public AboutViewModel(ILocalizationService localization)
     {
-        VersionText = $"{localization.GetString("About")} {GetProductVersion()}";
+        FooterText = $"HyoPDF v{GetProductVersion()} · © 2026 HyoT. All rights reserved. · ";
     }
 
     private static string GetProductVersion()

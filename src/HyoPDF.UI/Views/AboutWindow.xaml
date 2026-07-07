@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="HyoPDF 정보"
         Width="420"
-        Height="320"
+        Height="280"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         WindowStyle="None"
@@ -20,20 +20,15 @@
                        Style="{StaticResource TextTitle}"
                        FontSize="28"
                        HorizontalAlignment="Center"
-                       Margin="0,0,0,8" />
-            <TextBlock Text="{Binding VersionText}"
+                       Margin="0,0,0,14" />
+            <TextBlock HorizontalAlignment="Center"
                        Style="{StaticResource TextSecondary}"
-                       HorizontalAlignment="Center"
-                       Margin="0,0,0,16" />
-            <TextBlock Text="© 2026 HyoT. All rights reserved."
-                       Style="{StaticResource TextSecondary}"
-                       HorizontalAlignment="Center"
                        TextAlignment="Center"
-                       Margin="0,0,0,16" />
-            <TextBlock HorizontalAlignment="Center" Style="{StaticResource TextPrimary}">
-                <Hyperlink NavigateUri="https://furss123.github.io/hyot-software-center/ko/"
+                       Margin="0,0,0,8">
+                <Run Text="{Binding FooterText}" />
+                <Hyperlink NavigateUri="https://hyot.dev"
                            RequestNavigate="OnLinkNavigate">
-                    furss123.github.io/hyot-software-center
+                    hyot.dev
                 </Hyperlink>
             </TextBlock>
             <Button x:Name="OkButton"
