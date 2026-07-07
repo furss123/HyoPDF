@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HyoPDF.Core.Diagnostics;
 using HyoPDF.Core.Localization;
 using HyoPDF.Core.PageOperations;
 using HyoPDF.Core.Services;
@@ -217,6 +218,7 @@ public partial class PageViewModel : ObservableObject
             // file, disk full, etc.) would otherwise strand the UI on a document
             // whose underlying handle is gone, with no visible error.
             Debug.WriteLine($"{description} failed: {ex}");
+            FileLog.Write($"[Page] {description} failed: {path}", ex);
             _toastService.Show(_localization.GetString("PageOperationFailed"), ToastType.Error);
             ReloadDocument(path);
             return;
@@ -344,6 +346,7 @@ public partial class PageViewModel : ObservableObject
         catch (Exception ex)
         {
             Debug.WriteLine($"Paste failed: {ex}");
+            FileLog.Write($"[Page] Paste failed: {path}", ex);
             _toastService.Show(_localization.GetString("PastePagesFailed"), ToastType.Error);
         }
         finally
@@ -434,6 +437,7 @@ public partial class PageViewModel : ObservableObject
         catch (Exception ex)
         {
             Debug.WriteLine($"Delete failed: {ex}");
+            FileLog.Write($"[Page] Delete failed: {path}", ex);
             _toastService.Show(_localization.GetString("DeletePagesFailed"), ToastType.Error);
         }
         finally
@@ -499,6 +503,7 @@ public partial class PageViewModel : ObservableObject
         catch (Exception ex)
         {
             Debug.WriteLine($"Extract failed: {ex}");
+            FileLog.Write($"[Page] Extract failed: {path}", ex);
             _toastService.Show(_localization.GetString("ExtractPagesFailed"), ToastType.Error);
         }
         finally
@@ -558,6 +563,7 @@ public partial class PageViewModel : ObservableObject
         catch (Exception ex)
         {
             Debug.WriteLine($"Convert failed: {ex}");
+            FileLog.Write($"[Page] Convert to image failed: {path}", ex);
             _toastService.Show(_localization.GetString("ConvertToImageFailed"), ToastType.Error);
         }
         finally

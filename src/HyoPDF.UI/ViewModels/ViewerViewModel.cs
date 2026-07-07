@@ -651,6 +651,7 @@ public partial class ViewerViewModel : ObservableObject, IDisposable
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"[Viewer] GoToPage failed: {ex}");
+            FileLog.Write($"[Viewer] GoToPage failed: index={pageIndex}", ex);
         }
     }
 
@@ -921,6 +922,7 @@ public partial class ViewerViewModel : ObservableObject, IDisposable
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"[Viewer] OnCurrentPageIndexChanged failed: {ex}");
+            FileLog.Write($"[Viewer] OnCurrentPageIndexChanged failed: index={value}", ex);
         }
 
     }
